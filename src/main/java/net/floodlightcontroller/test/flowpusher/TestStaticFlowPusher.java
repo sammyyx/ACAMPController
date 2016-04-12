@@ -73,7 +73,7 @@ public class TestStaticFlowPusher implements IFloodlightModule, IOFSwitchListene
 		OFFactory my13Factory = OFFactories.getFactory(OFVersion.OF_13);
 		Match myMatch = my13Factory.buildMatch()
 				.setExact(MatchField.IN_PORT, OFPort.of(1))
-				.setExact(MatchField.IP_PROTO, IpProtocol.ICMP)
+				.setExact(MatchField.IP_PROTO, IpProtocol.UDP)
 				.build();
 		ArrayList<OFAction> actionList = new ArrayList<OFAction>();
 		OFActions actions = my13Factory.actions();
