@@ -1,3 +1,5 @@
-##This is a private repository
-##For testing porpose
-##All Right Reserved by Carl
+##泛在无线网络团队SDN项目控制器侧项目
+##fork自floodlight官方v1.2项目，主要实现与AP之间的通信
+##master分支为主要分支，此分支受保护，不允许强制修改和删除
+##团队成员修改请提交到community分支。
+##感谢团队成员贡献的代码！
