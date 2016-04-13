@@ -1,7 +1,6 @@
-package net.floodlightcontroller.acamp.message;
+package net.floodlightcontroller.packet;
 
-public class ACAMPMessageElement {
-	
+public class ACAMPMsgEle {
 	/*****************所有消息元素类型在此处定义*******************/
 	public final static short RESULT_CODE 		= 0x0001;
 	public final static short REASON_CODE 		= 0x0002;
@@ -30,6 +29,11 @@ public class ACAMPMessageElement {
 	private short messageElementType;
 	private short messageElementLength;
 	private int messageElementValue;
+	public ACAMPMsgEle(short type, short length, int value) {
+		this.messageElementType = type;
+		this.messageElementLength = length;
+		this.messageElementValue = value;
+	}
 	public short getMessageElementType() {
 		return messageElementType;
 	}
@@ -49,5 +53,6 @@ public class ACAMPMessageElement {
 		this.messageElementValue = messageElementValue;
 	}
 	
+
 
 }

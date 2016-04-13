@@ -13,6 +13,7 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
+import net.floodlightcontroller.packet.ACAMP;
 import net.floodlightcontroller.packet.Data;
 import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPv4;
@@ -140,7 +141,15 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				UDP udp = (UDP) ipv4.getPayload();
 				TransportPort srcPort = udp.getSourcePort();
 				TransportPort dstPort = udp.getDestinationPort();
-				byte[] data = udp.getPayload().serialize();
+//				byte[] data = udp.getPayload().serialize();
+				ACAMP acmap = new ACAMP();
+				acmap.setVersion((byte)10)
+					 .setType((byte)11)
+					 .setAPID((short)12)
+					 .setSequenceNumber((int)88888888)
+					 .setMessageType((short)13)
+					 .setMessageLength((short)14);
+				byte[] data = acmap.serialize();
 				ACAMPagent.sendMessage(sw, inPort, srcMacAddress, dstMacAddress,
 						srcIpAddr, dstIpAddr, srcPort, dstPort, data);
 			}
