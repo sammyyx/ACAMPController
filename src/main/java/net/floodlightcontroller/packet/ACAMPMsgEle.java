@@ -1,6 +1,9 @@
 package net.floodlightcontroller.packet;
 
-public class ACAMPMsgEle {
+import java.nio.ByteBuffer;
+
+public class ACAMPMsgEle extends BasePacket implements IPacket {
+	protected final static int ELE_HEADER_LEN = 4;
 	/*****************所有消息元素类型在此处定义*******************/
 	public final static short RESULT_CODE 		= 0x0001;
 	public final static short REASON_CODE 		= 0x0002;
@@ -26,32 +29,50 @@ public class ACAMPMsgEle {
 	public final static short DEL_STATION 		= 0x0404;
 	public final static short STATION_EVENT 	= 0x0501;
 	/*********************************************************/
-	private short messageElementType;
-	private short messageElementLength;
-	private int messageElementValue;
-	public ACAMPMsgEle(short type, short length, int value) {
-		this.messageElementType = type;
-		this.messageElementLength = length;
-		this.messageElementValue = value;
+	protected short messageElementType;
+	protected short messageElementLength;
+	
+	@Override
+	public byte[] serialize() {
+		byte[] payloadData = null;
+		if(payload != null) {
+			payload.setParent(this);
+			payloadData = payload.serialize();
+		}
+		this.messageElementLength = (short) ((payloadData == null) ? 
+				0 : payloadData.length);
+		byte[] data = new byte[this.messageElementLength + ELE_HEADER_LEN];
+		ByteBuffer bb = ByteBuffer.wrap(payloadData);
+		bb.putShort(messageElementType);
+		bb.putShort(messageElementLength);
+		if(payloadData.length != 0) {
+			bb.put(payloadData);
+		}
+		return data;
 	}
+	@Override
+	public IPacket deserialize(byte[] data, int offset, int length)
+			throws PacketParsingException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public short getMessageElementType() {
 		return messageElementType;
 	}
-	public void setMessageElementType(short messageElementType) {
+	public ACAMPMsgEle setMessageElementType(short messageElementType) {
 		this.messageElementType = messageElementType;
+		return this;
 	}
 	public short getMessageElementLength() {
 		return messageElementLength;
 	}
-	public void setMessageElementLength(short messageElementLength) {
+	public ACAMPMsgEle setMessageElementLength(short messageElementLength) {
 		this.messageElementLength = messageElementLength;
+		return this;
 	}
-	public int getMessageElementValue() {
-		return messageElementValue;
-	}
-	public void setMessageElementValue(int messageElementValue) {
-		this.messageElementValue = messageElementValue;
-	}
+
+
 	
 
 

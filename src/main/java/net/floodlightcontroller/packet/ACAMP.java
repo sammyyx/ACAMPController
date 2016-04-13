@@ -30,19 +30,18 @@ public class ACAMP extends BasePacket implements IPacket {
 	private int sequenceNumber;
 	private short messageType;
 	private short messageLength;
-	private LinkedList<ACAMPMsgEle> MsgEleList;
-	
-	public ACAMP() {
-		this.MsgEleList = new LinkedList<ACAMPMsgEle>();
-	}
-	
-	public void addMessageElement(short type, short length, int value) {
-		MsgEleList.add(new ACAMPMsgEle(type, length, value));
-	}
+	private int preamble;
 
 	@Override
 	public byte[] serialize() {
-		byte[] data = new byte[MsgEleList.size()*MSG_ELE_LENGTH + HEADER_LENGTH];
+		byte[] payloadData = null;
+		if(payload != null) {
+			payload.setParent(this);
+			payloadData = payload.serialize();
+		}
+		this.messageLength = (short) (HEADER_LENGTH + ((payloadData == null) ? 
+				0 : payloadData.length));
+		byte[] data = new byte[this.messageLength];
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.putInt(PREAMBLE);
 		bb.put(version);
@@ -51,20 +50,22 @@ public class ACAMP extends BasePacket implements IPacket {
 		bb.putInt(sequenceNumber);
 		bb.putShort(messageType);
 		bb.putShort(messageLength);
-		if(MsgEleList.size() != 0) {
-			for(ACAMPMsgEle msgEle: MsgEleList) {
-				bb.putShort(msgEle.getMessageElementType());
-				bb.putShort(msgEle.getMessageElementLength());
-				bb.putInt(msgEle.getMessageElementValue());
-			}
-		}
+		bb.put(payloadData);
 		return data;
+		
 	}
 
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		// TODO Auto-generated method stub
+		ByteBuffer bb = ByteBuffer.wrap(data);
+		preamble = bb.getInt();
+		version = bb.get();
+		type = bb.get();
+		apid = bb.getShort();
+		sequenceNumber = bb.getInt();
+		messageType = bb.getShort();
+		messageLength = bb.getShort();
 		return null;
 	}
 	
@@ -112,6 +113,10 @@ public class ACAMP extends BasePacket implements IPacket {
 	}
 	public static int getPreamble() {
 		return PREAMBLE;
+	}
+
+	public void setPreamble(int preamble) {
+		this.preamble = preamble;
 	}
 
 
