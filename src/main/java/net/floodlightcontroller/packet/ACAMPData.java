@@ -11,6 +11,7 @@ public class ACAMPData extends BasePacket implements IPacket {
 		msgEleList = new LinkedList<ACAMPMsgEle>();
 	}
 	
+	//向ACAMPData里面添加Message Element，ACAMPData总长度在此函数中统计
 	public void addMessageElement(ACAMPMsgEle msgEle) {
 		msgEleList.add(msgEle);
 		length += (msgEle.messageElementLength + ACAMPMsgEle.ELE_HEADER_LEN);
@@ -19,6 +20,7 @@ public class ACAMPData extends BasePacket implements IPacket {
 	@Override
 	public byte[] serialize() {
 		byte[] data = null;
+		//如果含有Message Element，此申请ACAMPData大小的空间并
 		if(length != 0) {
 			 data = new byte[length];
 			 ByteBuffer bb = ByteBuffer.wrap(data);
