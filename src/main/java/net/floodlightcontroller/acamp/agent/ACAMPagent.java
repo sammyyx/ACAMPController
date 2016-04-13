@@ -141,8 +141,8 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				TransportPort srcPort = udp.getSourcePort();
 				TransportPort dstPort = udp.getDestinationPort();
 				byte[] data = udp.getPayload().serialize();
-				ACAMPagent.sendMessage(sw, inPort, srcMacAddress, dstMacAddress,
-						srcIpAddr, dstIpAddr, srcPort, dstPort, data);
+				ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
+						dstIpAddr, srcIpAddr, dstPort, srcPort, data);
 			}
 			break;
 		}
