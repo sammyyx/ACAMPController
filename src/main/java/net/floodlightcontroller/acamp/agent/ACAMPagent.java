@@ -146,7 +146,6 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				ACAMP acmap = new ACAMP();
 				ACAMPMsgEle msgEle = new ACAMPMsgEle();
 				msgEle.setMessageElementType((short)ACAMPMsgEle.RESULT_CODE)
-					  .setMessageElementLength((short)10)
 					  .setPayload(null);
 				ACAMPData acampData = new ACAMPData();
 				acampData.addMessageElement(msgEle);
@@ -155,7 +154,6 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					 .setAPID((short)12)
 					 .setSequenceNumber((int)88888888)
 					 .setMessageType((short)13)
-					 .setMessageLength((short)14)
 					 .setPayload(acampData);
 				byte[] data = acmap.serialize();
 				ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
