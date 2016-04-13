@@ -39,13 +39,11 @@ public class ACAMPMsgEle extends BasePacket implements IPacket {
 			payload.setParent(this);
 			payloadData = payload.serialize();
 		}
-		this.messageElementLength = (short) ((payloadData == null) ? 
-				0 : payloadData.length);
 		byte[] data = new byte[this.messageElementLength + ELE_HEADER_LEN];
-		ByteBuffer bb = ByteBuffer.wrap(payloadData);
+		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.putShort(messageElementType);
 		bb.putShort(messageElementLength);
-		if(payloadData.length != 0) {
+		if(payloadData != null) {
 			bb.put(payloadData);
 		}
 		return data;
