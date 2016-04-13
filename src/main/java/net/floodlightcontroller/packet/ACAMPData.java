@@ -32,7 +32,13 @@ public class ACAMPData extends BasePacket implements IPacket {
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		// TODO Auto-generated method stub
+		ByteBuffer bb = ByteBuffer.wrap(data);
+		while(bb.hasArray()) {
+			ACAMPMsgEle msgEle = new ACAMPMsgEle();
+			msgEle.setMessageElementType(msgEle.getMessageElementType());
+			msgEle.setMessageElementLength(msgEle.getMessageElementLength());
+		}
+
 		return null;
 	}
 

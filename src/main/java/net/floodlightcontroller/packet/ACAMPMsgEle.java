@@ -33,6 +33,14 @@ public class ACAMPMsgEle extends BasePacket implements IPacket {
 	protected short messageElementLength;
 	
 	@Override
+    public IPacket setPayload(IPacket payload) {
+		if(payload == null) return this;
+    	byte[] payloadData = payload.serialize();
+    	this.messageElementLength = (short)payloadData.length;
+    	return this;
+    }
+	
+	@Override
 	public byte[] serialize() {
 		byte[] payloadData = null;
 		if(payload != null) {

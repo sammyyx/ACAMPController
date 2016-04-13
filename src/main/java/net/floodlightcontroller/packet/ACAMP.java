@@ -59,13 +59,13 @@ public class ACAMP extends BasePacket implements IPacket {
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		preamble = bb.getInt();
-		version = bb.get();
-		type = bb.get();
-		apid = bb.getShort();
-		sequenceNumber = bb.getInt();
-		messageType = bb.getShort();
-		messageLength = bb.getShort();
+		this.preamble = bb.getInt();
+		this.version = bb.get();
+		this.type = bb.get();
+		this.apid = bb.getShort();
+		this.sequenceNumber = bb.getInt();
+		this.messageType = bb.getShort();
+		this.messageLength = bb.getShort();
 		return null;
 	}
 	
