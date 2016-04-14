@@ -72,7 +72,7 @@ public class TestStaticFlowPusher implements IFloodlightModule, IOFSwitchListene
 		logger.info("Detected a added switch, switch DPID:{}", switchId.toString());
 		OFFactory my13Factory = OFFactories.getFactory(OFVersion.OF_13);
 		Match myMatch = my13Factory.buildMatch()
-				.setExact(MatchField.IN_PORT, OFPort.of(1))
+				.setExact(MatchField.IN_PORT, OFPort.of(2))
 				.setExact(MatchField.IP_PROTO, IpProtocol.UDP)
 				.build();
 		ArrayList<OFAction> actionList = new ArrayList<OFAction>();

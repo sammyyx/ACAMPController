@@ -1,10 +1,12 @@
 package net.floodlightcontroller.acamp.agent;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import net.floodlightcontroller.acamp.msgele.TestMsgEle;
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.IFloodlightProviderService;
 import net.floodlightcontroller.core.IOFMessageListener;
@@ -13,9 +15,13 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
+import net.floodlightcontroller.packet.ACAMP;
+import net.floodlightcontroller.packet.ACAMPData;
+import net.floodlightcontroller.packet.ACAMPMsgEle;
 import net.floodlightcontroller.packet.Data;
 import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPv4;
+import net.floodlightcontroller.packet.PacketParsingException;
 import net.floodlightcontroller.packet.UDP;
 
 import org.projectfloodlight.openflow.protocol.OFMessage;
@@ -140,9 +146,36 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				UDP udp = (UDP) ipv4.getPayload();
 				TransportPort srcPort = udp.getSourcePort();
 				TransportPort dstPort = udp.getDestinationPort();
-				byte[] data = udp.getPayload().serialize();
-				ACAMPagent.sendMessage(sw, inPort, srcMacAddress, dstMacAddress,
-						srcIpAddr, dstIpAddr, srcPort, dstPort, data);
+				ACAMP recv = new ACAMP();
+				byte[] recvData = udp.getPayload().serialize();
+				try {
+					recv.deserialize(recvData, 0, recvData.length);
+				} catch (PacketParsingException e) {
+					e.printStackTrace();
+				}
+				ACAMP acmap = new ACAMP();
+				ACAMPMsgEle msgEle = new ACAMPMsgEle();
+				TestMsgEle testMsgEle = new TestMsgEle();
+				testMsgEle.setTypeValue(5656);
+				msgEle.setMessageElementType((short)ACAMPMsgEle.RESULT_CODE)
+					  .setPayload(testMsgEle);
+				ACAMPMsgEle msgEle2 = new ACAMPMsgEle();
+				TestMsgEle testMsgEle2 = new TestMsgEle();
+				testMsgEle2.setTypeValue(5656);
+				msgEle2.setMessageElementType((short)ACAMPMsgEle.RESULT_CODE)
+					  .setPayload(testMsgEle2);
+				ACAMPData acampData = new ACAMPData();
+				acampData.addMessageElement(msgEle);
+				acampData.addMessageElement(msgEle2);
+				acmap.setVersion((byte)10)
+					 .setType((byte)11)
+					 .setAPID((short)12)
+					 .setSequenceNumber((int)88888888)
+					 .setMessageType((short)13)
+					 .setPayload(acampData);
+				byte[] data = acmap.serialize();
+				ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
+						dstIpAddr, srcIpAddr, dstPort, srcPort, data);
 			}
 			break;
 		}
