@@ -78,7 +78,7 @@ public class ACAMP extends BasePacket implements IPacket {
 	public short getVersion() {
 		return version;
 	}
-	public ACAMP setVersion(byte version) {
+	public ACAMP setVersion(short version) {
 		this.version = version;
 		return this;
 	}
@@ -92,14 +92,14 @@ public class ACAMP extends BasePacket implements IPacket {
 	public int getAPID() {
 		return apid;
 	}
-	public ACAMP setAPID(short aPID) {
+	public ACAMP setAPID(int aPID) {
 		apid = aPID;
 		return this;
 	}
 	public long getSequenceNumber() {
 		return sequenceNumber;
 	}
-	public ACAMP setSequenceNumber(int sequenceNumber) {
+	public ACAMP setSequenceNumber(long sequenceNumber) {
 		this.sequenceNumber = sequenceNumber;
 		return this;
 	}
@@ -113,7 +113,7 @@ public class ACAMP extends BasePacket implements IPacket {
 	public int getMessageLength() {
 		return messageLength;
 	}
-	public ACAMP setMessageLength(short messageLength) {
+	public ACAMP setMessageLength(int messageLength) {
 		this.messageLength = messageLength;
 		return this;
 	}

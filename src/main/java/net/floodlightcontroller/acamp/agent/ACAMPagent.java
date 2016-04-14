@@ -156,22 +156,22 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				ACAMP acmap = new ACAMP();
 				ACAMPMsgEle msgEle = new ACAMPMsgEle();
 				TestMsgEle testMsgEle = new TestMsgEle();
-				testMsgEle.setTypeValue(5656);
-				msgEle.setMessageElementType((short)ACAMPMsgEle.RESULT_CODE)
+				testMsgEle.setTypeValue(0);
+				msgEle.setMessageElementType(ACAMPMsgEle.RESULT_CODE)
 					  .setPayload(testMsgEle);
 				ACAMPMsgEle msgEle2 = new ACAMPMsgEle();
 				TestMsgEle testMsgEle2 = new TestMsgEle();
-				testMsgEle2.setTypeValue(5656);
-				msgEle2.setMessageElementType((short)ACAMPMsgEle.RESULT_CODE)
+				testMsgEle2.setTypeValue(2);
+				msgEle2.setMessageElementType(ACAMPMsgEle.REASON_CODE)
 					  .setPayload(testMsgEle2);
 				ACAMPData acampData = new ACAMPData();
 				acampData.addMessageElement(msgEle);
 				acampData.addMessageElement(msgEle2);
-				acmap.setVersion((byte)10)
-					 .setType((byte)11)
-					 .setAPID((short)12)
-					 .setSequenceNumber((int)88888888)
-					 .setMessageType((short)13)
+				acmap.setVersion((short)1)
+					 .setType((byte)0)
+					 .setAPID(1)
+					 .setSequenceNumber(888888888)
+					 .setMessageType((short)ACAMP.CONFIGURATION_RESPONSE)
 					 .setPayload(acampData);
 				byte[] data = acmap.serialize();
 				ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
