@@ -21,6 +21,7 @@ import net.floodlightcontroller.packet.ACAMPMsgEle;
 import net.floodlightcontroller.packet.Data;
 import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPv4;
+import net.floodlightcontroller.packet.PacketParsingException;
 import net.floodlightcontroller.packet.UDP;
 
 import org.projectfloodlight.openflow.protocol.OFMessage;
@@ -145,6 +146,13 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				UDP udp = (UDP) ipv4.getPayload();
 				TransportPort srcPort = udp.getSourcePort();
 				TransportPort dstPort = udp.getDestinationPort();
+				ACAMP recv = new ACAMP();
+				byte[] recvData = udp.serialize();
+				try {
+					recv.deserialize(recvData, 0, recvData.length);
+				} catch (PacketParsingException e) {
+					e.printStackTrace();
+				}
 				ACAMP acmap = new ACAMP();
 				ACAMPMsgEle msgEle = new ACAMPMsgEle();
 				TestMsgEle testMsgEle = new TestMsgEle();
