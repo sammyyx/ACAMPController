@@ -2,6 +2,8 @@ package net.floodlightcontroller.packet;
 
 import java.nio.ByteBuffer;
 
+import net.floodlightcontroller.acamp.msgele.APDescriptor;
+import net.floodlightcontroller.acamp.msgele.APName;
 import net.floodlightcontroller.acamp.msgele.TestMsgEle;
 
 
@@ -68,8 +70,20 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		TestMsgEle testMsgEle = new TestMsgEle(); 
-		this.payload = testMsgEle.deserialize(data, offset, length);
+		switch(this.messageElementType) {
+		case ACAMPMsgEle.AP_NAME: {
+			APName apName = new APName();
+			this.payload = apName.deserialize(data, offset, length);
+		}
+		case ACAMPMsgEle.AP_DESCRIPTION: {
+			APDescriptor apDescriptor = new APDescriptor();
+			this.payload = apDescriptor.deserialize(data, offset, length);
+		}
+		default: {
+			TestMsgEle testMsgEle = new TestMsgEle();
+			this.payload = testMsgEle.deserialize(data, offset, length);
+		}
+		}
 		return this;
 	}
 	
