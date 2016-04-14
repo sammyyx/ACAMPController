@@ -66,7 +66,7 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.sequenceNumber = bb.getInt();
 		this.messageType = bb.getShort();
 		this.messageLength = bb.getShort();
-		if(bb.hasArray()) {
+		if(bb.hasRemaining()) {
 			ACAMPData acampData = new ACAMPData();
 			int payloadLength = length - HEADER_LENGTH;
 			byte[] payloadData = new byte[payloadLength];

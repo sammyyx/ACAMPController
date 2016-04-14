@@ -147,7 +147,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				TransportPort srcPort = udp.getSourcePort();
 				TransportPort dstPort = udp.getDestinationPort();
 				ACAMP recv = new ACAMP();
-				byte[] recvData = udp.serialize();
+				byte[] recvData = udp.getPayload().serialize();
 				try {
 					recv.deserialize(recvData, 0, recvData.length);
 				} catch (PacketParsingException e) {

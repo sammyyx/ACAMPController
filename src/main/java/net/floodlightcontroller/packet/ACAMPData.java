@@ -36,19 +36,16 @@ public class ACAMPData extends BasePacket implements IPacket {
 			throws PacketParsingException {
 		int position = 0;
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		while(bb.hasArray()) {
+		while(bb.hasRemaining()) {
 			ACAMPMsgEle msgEle = new ACAMPMsgEle();
 			msgEle.setMessageElementType(bb.getShort());
 			msgEle.setMessageElementLength(bb.getShort());
 			byte[] payloadData = new byte[msgEle.getMessageElementLength()];
-			bb.get(payloadData, ACAMPMsgEle.ELE_HEADER_LEN, ACAMPMsgEle.ELE_HEADER_LEN 
-					+ msgEle.getMessageElementLength());
+//			bb.get(payloadData, ACAMPMsgEle.ELE_HEADER_LEN, ACAMPMsgEle.ELE_HEADER_LEN 
+//					+ msgEle.getMessageElementLength() - 1);
+			bb.get(payloadData, 0, msgEle.getMessageElementLength());
  			msgEle.deserialize(payloadData, 0, msgEle.getMessageElementLength());
  			msgEleList.add(msgEle);
- 			if(bb.hasArray()) {
- 	 			bb.get(data);
- 	 			bb = ByteBuffer.wrap(data);
- 			}
 		}
 		return this;
 	}
