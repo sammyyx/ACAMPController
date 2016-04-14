@@ -1,10 +1,12 @@
 package net.floodlightcontroller.acamp.agent;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import net.floodlightcontroller.acamp.msgele.TestMsgEle;
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.IFloodlightProviderService;
 import net.floodlightcontroller.core.IOFMessageListener;
@@ -145,8 +147,10 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				TransportPort dstPort = udp.getDestinationPort();
 				ACAMP acmap = new ACAMP();
 				ACAMPMsgEle msgEle = new ACAMPMsgEle();
+				TestMsgEle testMsgEle = new TestMsgEle();
+				testMsgEle.setTypeValue(5656);
 				msgEle.setMessageElementType((short)ACAMPMsgEle.RESULT_CODE)
-					  .setPayload(null);
+					  .setPayload(testMsgEle);
 				ACAMPData acampData = new ACAMPData();
 				acampData.addMessageElement(msgEle);
 				acmap.setVersion((byte)10)
