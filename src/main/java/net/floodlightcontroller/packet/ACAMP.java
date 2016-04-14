@@ -70,6 +70,7 @@ public class ACAMP extends BasePacket implements IPacket {
 			ACAMPData acampData = new ACAMPData();
 			int payloadLength = length - HEADER_LENGTH;
 			byte[] payloadData = new byte[payloadLength];
+			bb.get(payloadData);
 			this.payload = acampData.deserialize(payloadData, 0, payloadLength);
 		}
 		return this;

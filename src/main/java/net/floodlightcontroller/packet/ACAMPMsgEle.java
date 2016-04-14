@@ -2,6 +2,8 @@ package net.floodlightcontroller.packet;
 
 import java.nio.ByteBuffer;
 
+import net.floodlightcontroller.acamp.msgele.TestMsgEle;
+
 
 public class ACAMPMsgEle extends BasePacket implements IPacket{
 	protected final static int ELE_HEADER_LEN = 4;
@@ -66,8 +68,9 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		// TODO Auto-generated method stub
-		return null;
+		TestMsgEle testMsgEle = new TestMsgEle(); 
+		this.payload = testMsgEle.deserialize(data, offset, length);
+		return this;
 	}
 	
 	public short getMessageElementType() {
