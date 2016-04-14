@@ -2,7 +2,10 @@ package net.floodlightcontroller.packet;
 
 import java.nio.ByteBuffer;
 
-public class ACAMPMsgEle extends BasePacket implements IPacket {
+import net.floodlightcontroller.acamp.msgele.TestMsgEle;
+
+
+public class ACAMPMsgEle extends BasePacket implements IPacket{
 	protected final static int ELE_HEADER_LEN = 4;
 	/*****************所有消息元素类型在此处定义*******************/
 	public final static short RESULT_CODE 		= 0x0001;
@@ -33,34 +36,41 @@ public class ACAMPMsgEle extends BasePacket implements IPacket {
 	protected short messageElementLength;
 	
 	@Override
-    public IPacket setPayload(IPacket payload) {
-		if(payload == null) return this;
-    	byte[] payloadData = payload.serialize();
-    	this.messageElementLength = (short)payloadData.length;
-    	return this;
-    }
+	public IPacket setPayload(IPacket payload) {
+		this.payload = payload;
+		if(payload != null) {
+			this.messageElementLength = (short)payload.serialize().length;
+		}
+		else {
+			this.messageElementLength = 0;
+		}
+		return this;
+	}
 	
+
 	@Override
 	public byte[] serialize() {
 		byte[] payloadData = null;
-		if(payload != null) {
-			payload.setParent(this);
+		if(this.messageElementLength != 0) {
 			payloadData = payload.serialize();
+			payload.setParent(this);
 		}
 		byte[] data = new byte[this.messageElementLength + ELE_HEADER_LEN];
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.putShort(messageElementType);
 		bb.putShort(messageElementLength);
-		if(payloadData != null) {
+		if(this.messageElementLength != 0) {
 			bb.put(payloadData);
 		}
 		return data;
 	}
+	
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		// TODO Auto-generated method stub
-		return null;
+		TestMsgEle testMsgEle = new TestMsgEle(); 
+		this.payload = testMsgEle.deserialize(data, offset, length);
+		return this;
 	}
 	
 	public short getMessageElementType() {
@@ -77,6 +87,9 @@ public class ACAMPMsgEle extends BasePacket implements IPacket {
 		this.messageElementLength = messageElementLength;
 		return this;
 	}
+
+
+
 
 
 	

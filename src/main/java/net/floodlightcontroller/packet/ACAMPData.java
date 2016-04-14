@@ -11,6 +11,7 @@ public class ACAMPData extends BasePacket implements IPacket {
 		msgEleList = new LinkedList<ACAMPMsgEle>();
 	}
 	
+	//向ACAMPData里面添加Message Element，ACAMPData总长度在此函数中统计
 	public void addMessageElement(ACAMPMsgEle msgEle) {
 		msgEleList.add(msgEle);
 		length += (msgEle.messageElementLength + ACAMPMsgEle.ELE_HEADER_LEN);
@@ -19,6 +20,7 @@ public class ACAMPData extends BasePacket implements IPacket {
 	@Override
 	public byte[] serialize() {
 		byte[] data = null;
+		//如果含有Message Element，此申请ACAMPData大小的空间并
 		if(length != 0) {
 			 data = new byte[length];
 			 ByteBuffer bb = ByteBuffer.wrap(data);
@@ -32,14 +34,23 @@ public class ACAMPData extends BasePacket implements IPacket {
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
+		int position = 0;
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		while(bb.hasArray()) {
 			ACAMPMsgEle msgEle = new ACAMPMsgEle();
-			msgEle.setMessageElementType(msgEle.getMessageElementType());
-			msgEle.setMessageElementLength(msgEle.getMessageElementLength());
+			msgEle.setMessageElementType(bb.getShort());
+			msgEle.setMessageElementLength(bb.getShort());
+			byte[] payloadData = new byte[msgEle.getMessageElementLength()];
+			bb.get(payloadData, ACAMPMsgEle.ELE_HEADER_LEN, ACAMPMsgEle.ELE_HEADER_LEN 
+					+ msgEle.getMessageElementLength());
+ 			msgEle.deserialize(payloadData, 0, msgEle.getMessageElementLength());
+ 			msgEleList.add(msgEle);
+ 			if(bb.hasArray()) {
+ 	 			bb.get(data);
+ 	 			bb = ByteBuffer.wrap(data);
+ 			}
 		}
-
-		return null;
+		return this;
 	}
 
 }
