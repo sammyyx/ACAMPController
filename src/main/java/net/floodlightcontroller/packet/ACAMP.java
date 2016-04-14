@@ -1,7 +1,6 @@
 package net.floodlightcontroller.packet;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
 
 public class ACAMP extends BasePacket implements IPacket {
 
@@ -23,12 +22,12 @@ public class ACAMP extends BasePacket implements IPacket {
 	public final static byte STAT_REQUEST 				= 0x41;
 	public final static byte STAT_RESPONSE 				= 0x42;
 	/*********************************************************/
-	private byte version;								//版本号
+	private short version;								//版本号
 	private byte type;									//消息类型
-	private short apid;									//APID
-	private int sequenceNumber;							//序	列号
+	private int apid;									//APID
+	private long sequenceNumber;						//序	列号
 	private short messageType;							//消息类型
-	private short messageLength;						//不需要显性设置，解序列化自动填充
+	private int messageLength;							//不需要显性设置，解序列化自动填充
 
 	@Override
 	public byte[] serialize() {
@@ -43,12 +42,12 @@ public class ACAMP extends BasePacket implements IPacket {
 		byte[] data = new byte[this.messageLength];
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.putInt(PREAMBLE);
-		bb.put(this.version);
+		bb.put((byte)this.version);
 		bb.put(this.type);
-		bb.putShort(this.apid);
-		bb.putInt(this.sequenceNumber);
+		bb.putShort((short)this.apid);
+		bb.putInt((int)this.sequenceNumber);
 		bb.putShort(this.messageType);
-		bb.putShort(this.messageLength);
+		bb.putShort((short)this.messageLength);
 		if(payloadData != null) {
 			bb.put(payloadData);
 		}
@@ -60,12 +59,12 @@ public class ACAMP extends BasePacket implements IPacket {
 			throws PacketParsingException {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.getInt();
-		this.version = bb.get();
+		this.version = (short)(bb.get() & 0x0ff);
 		this.type = bb.get();
-		this.apid = bb.getShort();
-		this.sequenceNumber = bb.getInt();
+		this.apid = (int)(bb.getShort() & 0x0ffff);
+		this.sequenceNumber = (long)(bb.getInt() & 0x0ffffffff);
 		this.messageType = bb.getShort();
-		this.messageLength = bb.getShort();
+		this.messageLength = (int)(bb.getShort() & 0x0ffff);
 		if(bb.hasRemaining()) {
 			ACAMPData acampData = new ACAMPData();
 			int payloadLength = length - HEADER_LENGTH;
@@ -76,7 +75,7 @@ public class ACAMP extends BasePacket implements IPacket {
 		return this;
 	}
 	
-	public byte getVersion() {
+	public short getVersion() {
 		return version;
 	}
 	public ACAMP setVersion(byte version) {
@@ -90,14 +89,14 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.type = type;
 		return this;
 	}
-	public short getAPID() {
+	public int getAPID() {
 		return apid;
 	}
 	public ACAMP setAPID(short aPID) {
 		apid = aPID;
 		return this;
 	}
-	public int getSequenceNumber() {
+	public long getSequenceNumber() {
 		return sequenceNumber;
 	}
 	public ACAMP setSequenceNumber(int sequenceNumber) {
@@ -111,7 +110,7 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.messageType = messageType;
 		return this;
 	}
-	public short getMessageLength() {
+	public int getMessageLength() {
 		return messageLength;
 	}
 	public ACAMP setMessageLength(short messageLength) {

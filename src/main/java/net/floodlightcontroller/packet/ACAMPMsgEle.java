@@ -33,13 +33,13 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 	public final static short STATION_EVENT 	= 0x0501;
 	/*********************************************************/
 	protected short messageElementType;
-	protected short messageElementLength;
+	protected int messageElementLength;
 	
 	@Override
 	public IPacket setPayload(IPacket payload) {
 		this.payload = payload;
 		if(payload != null) {
-			this.messageElementLength = (short)payload.serialize().length;
+			this.messageElementLength = payload.serialize().length;
 		}
 		else {
 			this.messageElementLength = 0;
@@ -57,8 +57,8 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 		}
 		byte[] data = new byte[this.messageElementLength + ELE_HEADER_LEN];
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		bb.putShort(messageElementType);
-		bb.putShort(messageElementLength);
+		bb.putShort(this.messageElementType);
+		bb.putShort((short)messageElementLength);
 		if(this.messageElementLength != 0) {
 			bb.put(payloadData);
 		}
@@ -80,10 +80,10 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 		this.messageElementType = messageElementType;
 		return this;
 	}
-	public short getMessageElementLength() {
+	public int getMessageElementLength() {
 		return messageElementLength;
 	}
-	public ACAMPMsgEle setMessageElementLength(short messageElementLength) {
+	public ACAMPMsgEle setMessageElementLength(int messageElementLength) {
 		this.messageElementLength = messageElementLength;
 		return this;
 	}
