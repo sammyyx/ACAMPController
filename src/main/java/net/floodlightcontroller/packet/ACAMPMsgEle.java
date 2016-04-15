@@ -2,9 +2,29 @@ package net.floodlightcontroller.packet;
 
 import java.nio.ByteBuffer;
 
+import net.floodlightcontroller.acamp.msgele.ACInetAddr;
+import net.floodlightcontroller.acamp.msgele.ACMacAddr;
+import net.floodlightcontroller.acamp.msgele.APBoardAddr;
 import net.floodlightcontroller.acamp.msgele.APDescriptor;
+import net.floodlightcontroller.acamp.msgele.APInetAddr;
+import net.floodlightcontroller.acamp.msgele.APLocation;
+import net.floodlightcontroller.acamp.msgele.APMacAddr;
 import net.floodlightcontroller.acamp.msgele.APName;
+import net.floodlightcontroller.acamp.msgele.APRadioInformation;
+import net.floodlightcontroller.acamp.msgele.AddMacACLEntry;
+import net.floodlightcontroller.acamp.msgele.AddStation;
+import net.floodlightcontroller.acamp.msgele.Antenna;
+import net.floodlightcontroller.acamp.msgele.AssignedAPID;
+import net.floodlightcontroller.acamp.msgele.DeleteMacACLEntry;
+import net.floodlightcontroller.acamp.msgele.DeleteStation;
+import net.floodlightcontroller.acamp.msgele.MultiDomainCapability;
+import net.floodlightcontroller.acamp.msgele.ReasonCode;
+import net.floodlightcontroller.acamp.msgele.ResultCode;
+import net.floodlightcontroller.acamp.msgele.SupportedRates;
 import net.floodlightcontroller.acamp.msgele.TestMsgEle;
+import net.floodlightcontroller.acamp.msgele.Timestamp;
+import net.floodlightcontroller.acamp.msgele.TxPower;
+import net.floodlightcontroller.acamp.msgele.WlanInformation;
 
 
 public class ACAMPMsgEle extends BasePacket implements IPacket{
@@ -71,14 +91,117 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
 		switch(this.messageElementType) {
-		case ACAMPMsgEle.AP_NAME: {
-			APName apName = new APName();
-			this.payload = apName.deserialize(data, offset, length);
+		case ACAMPMsgEle.AC_INET_ADDR: {
+			ACInetAddr msgEle = new ACInetAddr();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.AC_MAC_ADDR: {
+			ACMacAddr msgEle = new ACMacAddr();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.ADD_MAC_ACL_ENTRY: {
+			AddMacACLEntry msgEle = new AddMacACLEntry();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.ADD_STATION: {
+			AddStation msgEle = new AddStation();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.ANTENNA: {
+			Antenna msgEle = new Antenna();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.AP_BOARD_DATA: {
+			APBoardAddr msgEle = new APBoardAddr();
+			this.payload = msgEle.deserialize(data, offset, length);
 			break;
 		}
 		case ACAMPMsgEle.AP_DESCRIPTION: {
 			APDescriptor apDescriptor = new APDescriptor();
 			this.payload = apDescriptor.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.AP_INET_ADDR: {
+			APInetAddr msgEle = new APInetAddr();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.AP_LOCATION: {
+			APLocation msgEle = new APLocation();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.AP_MAC_ADDR: {
+			APMacAddr msgEle = new APMacAddr();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.AP_NAME: {
+			APName apName = new APName();
+			this.payload = apName.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.AP_RADIO_INFO: {
+			APRadioInformation msgEle = new APRadioInformation();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.ASSIGNED_APID: {
+			AssignedAPID msgEle = new AssignedAPID();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.DEL_MAC_ACL_ENTRY: {
+			DeleteMacACLEntry msgEle = new DeleteMacACLEntry();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.DEL_STATION: {
+			DeleteStation msgEle = new DeleteStation();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.MULTI_DOMAIN_CAP: {
+			MultiDomainCapability msgEle = new MultiDomainCapability();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.REASON_CODE: {
+			ReasonCode msgEle = new ReasonCode();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.RESULT_CODE: {
+			ResultCode msgEle = new ResultCode();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+//		case ACAMPMsgEle.STATION_EVENT: {
+//			break;
+//		}
+		case ACAMPMsgEle.SUPPORTED_RATES: {
+			SupportedRates msgEle = new SupportedRates();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.TIME_STAMP: {
+			Timestamp msgEle = new Timestamp();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.TX_POWER: {
+			TxPower msgEle = new TxPower();
+			this.payload = msgEle.deserialize(data, offset, length);
+			break;
+		}
+		case ACAMPMsgEle.WLAN_INFO: {
+			WlanInformation msgEle = new WlanInformation();
+			this.payload = msgEle.deserialize(data, offset, length);
 			break;
 		}
 		default: {

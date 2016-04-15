@@ -23,4 +23,12 @@ public class APDescriptor extends BasePacket implements IPacket {
 		return this;
 	}
 
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 }

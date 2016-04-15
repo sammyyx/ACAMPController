@@ -6,17 +6,30 @@ import net.floodlightcontroller.packet.PacketParsingException;
 
 public class APLocation extends BasePacket implements IPacket {
 
+	String location;
+	
 	@Override
 	public byte[] serialize() {
-		// TODO Auto-generated method stub
-		return null;
+		byte[] locationBytes = null;
+		if(this.location != null) {
+			locationBytes = this.location.getBytes();
+		}
+		return locationBytes;
 	}
 
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		// TODO Auto-generated method stub
-		return null;
+		this.location = new String(data);
+		return this;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 }

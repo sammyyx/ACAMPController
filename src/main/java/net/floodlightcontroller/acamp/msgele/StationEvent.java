@@ -6,6 +6,7 @@ import net.floodlightcontroller.packet.PacketParsingException;
 
 public class StationEvent extends BasePacket implements IPacket {
 
+	
 	@Override
 	public byte[] serialize() {
 		// TODO Auto-generated method stub
