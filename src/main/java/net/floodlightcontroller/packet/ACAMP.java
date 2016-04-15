@@ -5,8 +5,8 @@ import java.nio.ByteBuffer;
 public class ACAMP extends BasePacket implements IPacket {
 
 	/*****************所有消息常量在此处定义*********************/
-	public static final int PREAMBLE 					= 0x01;
-	public static final int HEADER_LENGTH 				= 16;
+	private static final int PREAMBLE 					= 0x01;
+	private static final int HEADER_LENGTH 				= 16;
 	/*****************所有消息类型在此处定义*********************/
 	public final static byte REGISTER_REQUEST 			= 0x11;
 	public final static byte REGISTER_RESPONSE 			= 0x12;

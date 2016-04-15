@@ -74,17 +74,14 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 		case ACAMPMsgEle.AP_NAME: {
 			APName apName = new APName();
 			this.payload = apName.deserialize(data, offset, length);
-			break;
 		}
 		case ACAMPMsgEle.AP_DESCRIPTION: {
 			APDescriptor apDescriptor = new APDescriptor();
 			this.payload = apDescriptor.deserialize(data, offset, length);
-			break;
 		}
 		default: {
 			TestMsgEle testMsgEle = new TestMsgEle();
 			this.payload = testMsgEle.deserialize(data, offset, length);
-			break;
 		}
 		}
 		return this;
