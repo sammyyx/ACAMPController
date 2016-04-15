@@ -139,6 +139,9 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 			Ethernet eth = IFloodlightProviderService.bcStore.get(cntx, IFloodlightProviderService.CONTEXT_PI_PAYLOAD);
 			MacAddress srcMacAddress = eth.getSourceMACAddress();
 			MacAddress dstMacAddress = eth.getDestinationMACAddress();
+			if(eth.getEtherType() != EthType.IPv4) {
+				return Command.CONTINUE;
+			}
 			IPv4 ipv4 = (IPv4)eth.getPayload();
 			IPv4Address srcIpAddr = ipv4.getSourceAddress();
 			IPv4Address dstIpAddr = ipv4.getDestinationAddress();
@@ -146,8 +149,11 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				UDP udp = (UDP) ipv4.getPayload();
 				TransportPort srcPort = udp.getSourcePort();
 				TransportPort dstPort = udp.getDestinationPort();
-				ACAMP recv = new ACAMP();
 				byte[] recvData = udp.getPayload().serialize();
+				if(ByteBuffer.wrap(recvData).getInt() != ACAMP.PREAMBLE) {
+					return Command.CONTINUE;
+				}
+				ACAMP recv = new ACAMP();
 				try {
 					recv.deserialize(recvData, 0, recvData.length);
 				} catch (PacketParsingException e) {
@@ -176,13 +182,14 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				byte[] data = acmap.serialize();
 				ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
 						dstIpAddr, srcIpAddr, dstPort, srcPort, data);
+				return Command.STOP;
 			}
 			break;
 		}
 		default:
 			break;
 		}
-		return Command.STOP;
+		return Command.CONTINUE;
 	}
 
 }
