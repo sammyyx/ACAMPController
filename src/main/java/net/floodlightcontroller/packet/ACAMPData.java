@@ -3,6 +3,8 @@ package net.floodlightcontroller.packet;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 
+import net.floodlightcontroller.acamp.agent.ACAMPProtocol;
+
 public class ACAMPData extends BasePacket implements IPacket {
 	private LinkedList<ACAMPMsgEle> msgEleList;
 	private int length;
@@ -11,10 +13,14 @@ public class ACAMPData extends BasePacket implements IPacket {
 		msgEleList = new LinkedList<ACAMPMsgEle>();
 	}
 	
+	public LinkedList<ACAMPMsgEle> getMsgEleList() {
+		return msgEleList;
+	}
+
 	//向ACAMPData里面添加Message Element，ACAMPData总长度在此函数中统计
 	public void addMessageElement(ACAMPMsgEle msgEle) {
 		msgEleList.add(msgEle);
-		length += (msgEle.messageElementLength + ACAMPMsgEle.ELE_HEADER_LEN);
+		length += (msgEle.messageElementLength + ACAMPProtocol.LEN_ME_HEADER);
 	}
 	
 	@Override
@@ -37,11 +43,11 @@ public class ACAMPData extends BasePacket implements IPacket {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		while(bb.hasRemaining()) {
 			ACAMPMsgEle msgEle = new ACAMPMsgEle();
-			msgEle.setMessageElementType(bb.getShort());
-			msgEle.setMessageElementLength((int)(bb.getShort() & 0x0ffff));
-			byte[] payloadData = new byte[msgEle.getMessageElementLength()];
-			bb.get(payloadData, 0, msgEle.getMessageElementLength());
- 			msgEle.deserialize(payloadData, 0, msgEle.getMessageElementLength());
+			bb.getShort();//跳过类型字段的解析
+			int totalLength = ACAMPProtocol.LEN_ME_HEADER + (int)(bb.getShort() & 0x0ffffffff);
+			byte[] payloadData = new byte[totalLength];
+			bb.get(payloadData);
+ 			msgEle.deserialize(payloadData, 0, totalLength);
  			msgEleList.add(msgEle);
 		}
 		return this;

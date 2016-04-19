@@ -2,46 +2,30 @@ package net.floodlightcontroller.packet;
 
 import java.nio.ByteBuffer;
 
+import net.floodlightcontroller.acamp.agent.ACAMPProtocol;
+
 public class ACAMP extends BasePacket implements IPacket {
 
-	/*****************所有消息常量在此处定义*********************/
-	public static final int PREAMBLE 					= 0x01;
-	public static final int HEADER_LENGTH 				= 16;
-	/*****************所有消息类型在此处定义*********************/
-	public final static byte REGISTER_REQUEST 			= 0x11;
-	public final static byte REGISTER_RESPONSE 			= 0x12;
-	public final static byte DISCONNET_REQUEST 			= 0x13;
-	public final static byte DISCONNET_RESPONSE 		= 0x14;
-	public final static byte CONFIGURATION_REQUEST 		= 0x21;
-	public final static byte CONFIGURATION_RESPONSE 	= 0x22;
-	public final static byte CONFIGURATION_RESET_REQ 	= 0x23;
-	public final static byte CONFIGURATION_RESET_RSP 	= 0x24;
-	public final static byte STATISTIC_STAT_RP 			= 0x31;
-	public final static byte STATISTIC_STAT_QUERY 		= 0x32;
-	public final static byte STATISTIC_STAT_REPLY 		= 0x33;
-	public final static byte STAT_REQUEST 				= 0x41;
-	public final static byte STAT_RESPONSE 				= 0x42;
-	/*********************************************************/
-	private short version;								//版本号
-	private byte type;									//消息类型
-	private int apid;									//APID
-	private long sequenceNumber;						//序	列号
-	private short messageType;							//消息类型
-	private int messageLength;							//不需要显性设置，解序列化自动填充
+	private short version;			//版本号
+	private byte type;				//消息类型
+	private int apid;				//APID
+	private long sequenceNumber;	//序	列号
+	private short messageType;		//消息类型
+	private int messageLength;		//不需要显性设置，解序列化自动填充
 
 	@Override
 	public byte[] serialize() {
-		byte[] payloadData = null;						//ACAMP消息的载荷为ACAMPData
-		if(payload != null) {
-			payload.setParent(this);
-			payloadData = payload.serialize();
+		byte[] payloadData = null;	//ACAMP消息的载荷为ACAMPData
+		if(this.payload != null) {
+			this.payload.setParent(this);
+			payloadData = this.payload.serialize();
 		}
 		/* 消息长度等于头部长度加上载荷长度 */
-		this.messageLength = (short) (HEADER_LENGTH + ((payloadData == null) ? 
+		this.messageLength = (short) (ACAMPProtocol.LEN_ACAMP_HEADER + ((payloadData == null) ? 
 				0 : payloadData.length));
 		byte[] data = new byte[this.messageLength];
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		bb.putInt(PREAMBLE);
+		bb.putInt(ACAMPProtocol.PREAMBLE);
 		bb.put((byte)this.version);
 		bb.put(this.type);
 		bb.putShort((short)this.apid);
@@ -67,7 +51,7 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.messageLength = (int)(bb.getShort() & 0x0ffff);
 		if(bb.hasRemaining()) {
 			ACAMPData acampData = new ACAMPData();
-			int payloadLength = length - HEADER_LENGTH;
+			int payloadLength = length - ACAMPProtocol.LEN_ACAMP_HEADER;
 			byte[] payloadData = new byte[payloadLength];
 			bb.get(payloadData);
 			this.payload = acampData.deserialize(payloadData, 0, payloadLength);

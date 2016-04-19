@@ -15,7 +15,7 @@ public class WlanInformation extends BasePacket implements IPacket {
 	private byte keyStatus;
 	private short keyLength;
 	private byte[] key;
-	private byte[] groupTSC = new byte[6];	//length fixed to 6 bytes
+	private byte[] groupTSC;	//length fixed to 6 bytes
 	private byte qos;
 	private byte authType;
 	private byte suppressSSID;
@@ -40,7 +40,7 @@ public class WlanInformation extends BasePacket implements IPacket {
 		bb.put(this.qos);
 		bb.put(this.authType);
 		bb.put(this.suppressSSID);
-		if(ssid != null) {
+		if(ssid.length() != 0) {
 			bb.put(ssid.getBytes());
 		}
 		return wlanInfoBytes;
@@ -59,10 +59,12 @@ public class WlanInformation extends BasePacket implements IPacket {
 			this.keyLength = bb.getShort();
 			if(this.keyLength != 0) {
 				byte[] keyBytes = new byte[this.keyLength];
-				bb.get(keyBytes, 0, this.keyLength);
+				bb.get(keyBytes);
 				this.key = keyBytes;
 			}
-			bb.get(this.groupTSC, 0, 6);
+			byte[] groupTSCBytes = new byte[6];
+			bb.get(groupTSCBytes);
+			this.groupTSC = groupTSCBytes;
 			this.qos = bb.get();
 			this.authType = bb.get();
 			this.suppressSSID = bb.get();
@@ -77,96 +79,103 @@ public class WlanInformation extends BasePacket implements IPacket {
 		return radioId;
 	}
 
-	public void setRadioId(byte radioId) {
+	public WlanInformation setRadioId(byte radioId) {
 		this.radioId = radioId;
+		return this;
 	}
 
 	public byte getWlanId() {
 		return wlanId;
 	}
 
-	public void setWlanId(byte wlanId) {
+	public WlanInformation setWlanId(byte wlanId) {
 		this.wlanId = wlanId;
+		return this;
 	}
 
 	public short getCapability() {
 		return Capability;
 	}
 
-	public void setCapability(short capability) {
+	public WlanInformation setCapability(short capability) {
 		Capability = capability;
+		return this;
 	}
 
 	public byte getKeyIndex() {
 		return keyIndex;
 	}
 
-	public void setKeyIndex(byte keyIndex) {
+	public WlanInformation setKeyIndex(byte keyIndex) {
 		this.keyIndex = keyIndex;
+		return this;
 	}
 
 	public byte getKeyStatus() {
 		return keyStatus;
 	}
 
-	public void setKeyStatus(byte keyStatus) {
+	public WlanInformation setKeyStatus(byte keyStatus) {
 		this.keyStatus = keyStatus;
+		return this;
 	}
 
 	public short getKeyLength() {
 		return keyLength;
 	}
 
-	public void setKeyLength(short keyLength) {
-		this.keyLength = keyLength;
-	}
-
 	public byte[] getKey() {
 		return key;
 	}
 
-	public void setKey(byte[] key) {
+	public WlanInformation setKey(byte[] key) {
 		this.key = key;
+		return this;
 	}
 
 	public byte[] getGroupTSC() {
 		return groupTSC;
 	}
 
-	public void setGroupTSC(byte[] groupTSC) {
+	public WlanInformation setGroupTSC(byte[] groupTSC) {
 		this.groupTSC = groupTSC;
+		return this;
 	}
 
 	public byte getQos() {
 		return qos;
 	}
 
-	public void setQos(byte qos) {
+	public WlanInformation setQos(byte qos) {
 		this.qos = qos;
+		return this;
 	}
 
 	public byte getAuthType() {
 		return authType;
 	}
 
-	public void setAuthType(byte authType) {
+	public WlanInformation setAuthType(byte authType) {
 		this.authType = authType;
+		return this;
 	}
 
 	public byte getSuppressSSID() {
 		return suppressSSID;
 	}
 
-	public void setSuppressSSID(byte suppressSSID) {
+	public WlanInformation setSuppressSSID(byte suppressSSID) {
 		this.suppressSSID = suppressSSID;
+		return this;
 	}
 
 	public String getSsid() {
 		return ssid;
 	}
 
-	public void setSsid(String ssid) {
+	public WlanInformation setSsid(String ssid) {
 		this.ssid = ssid;
+		return this;
 	}
 	
 

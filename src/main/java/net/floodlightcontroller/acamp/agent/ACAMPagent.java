@@ -6,7 +6,23 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import net.floodlightcontroller.acamp.msgele.TestMsgEle;
+import org.projectfloodlight.openflow.protocol.OFMessage;
+import org.projectfloodlight.openflow.protocol.OFPacketIn;
+import org.projectfloodlight.openflow.protocol.OFPacketOut;
+import org.projectfloodlight.openflow.protocol.OFType;
+import org.projectfloodlight.openflow.protocol.OFVersion;
+import org.projectfloodlight.openflow.protocol.action.OFAction;
+import org.projectfloodlight.openflow.protocol.match.MatchField;
+import org.projectfloodlight.openflow.types.EthType;
+import org.projectfloodlight.openflow.types.IPv4Address;
+import org.projectfloodlight.openflow.types.IpProtocol;
+import org.projectfloodlight.openflow.types.MacAddress;
+import org.projectfloodlight.openflow.types.OFPort;
+import org.projectfloodlight.openflow.types.TransportPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.floodlightcontroller.acamp.msgele.WlanInformation;
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.IFloodlightProviderService;
 import net.floodlightcontroller.core.IOFMessageListener;
@@ -23,22 +39,6 @@ import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPv4;
 import net.floodlightcontroller.packet.PacketParsingException;
 import net.floodlightcontroller.packet.UDP;
-
-import org.projectfloodlight.openflow.protocol.OFMessage;
-import org.projectfloodlight.openflow.protocol.OFPacketIn;
-import org.projectfloodlight.openflow.protocol.OFPacketOut;
-import org.projectfloodlight.openflow.protocol.OFType;
-import org.projectfloodlight.openflow.protocol.OFVersion;
-import org.projectfloodlight.openflow.protocol.action.OFAction;
-import org.projectfloodlight.openflow.protocol.match.MatchField;
-import org.projectfloodlight.openflow.types.EthType;
-import org.projectfloodlight.openflow.types.IPv4Address;
-import org.projectfloodlight.openflow.types.IpProtocol;
-import org.projectfloodlight.openflow.types.MacAddress;
-import org.projectfloodlight.openflow.types.OFPort;
-import org.projectfloodlight.openflow.types.TransportPort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 
@@ -150,7 +150,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				TransportPort srcPort = udp.getSourcePort();
 				TransportPort dstPort = udp.getDestinationPort();
 				byte[] recvData = udp.getPayload().serialize();
-				if(ByteBuffer.wrap(recvData).getInt() != ACAMP.PREAMBLE) {
+				if(ByteBuffer.wrap(recvData).getInt() != ACAMPProtocol.PREAMBLE) {
 					return Command.CONTINUE;
 				}
 				ACAMP recv = new ACAMP();
@@ -159,27 +159,25 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				} catch (PacketParsingException e) {
 					e.printStackTrace();
 				}
-				ACAMP acmap = new ACAMP();
+				
+				ACAMP acamp = new ACAMP();
 				ACAMPMsgEle msgEle = new ACAMPMsgEle();
-				TestMsgEle testMsgEle = new TestMsgEle();
-				testMsgEle.setTypeValue("Hello world");
-				msgEle.setMessageElementType(ACAMPMsgEle.RESULT_CODE)
-					  .setPayload(testMsgEle);
-				ACAMPMsgEle msgEle2 = new ACAMPMsgEle();
-				TestMsgEle testMsgEle2 = new TestMsgEle();
-				testMsgEle2.setTypeValue("Hello world");
-				msgEle2.setMessageElementType(ACAMPMsgEle.REASON_CODE)
-					  .setPayload(testMsgEle2);
+				WlanInformation wlanInfo = (WlanInformation) msgEle.createBuilder(ACAMPProtocol.MsgEleType.WLAN_INFO);
+				wlanInfo.setAuthType((byte)0x11)
+						.setCapability((short)0x2222)
+						.setGroupTSC(new byte[6])
+						.setKeyIndex((byte)0x33)
+						.setKeyStatus((byte)0x44)
+						.setQos((byte)0x55)
+						.setRadioId((byte)0x66)
+						.setWlanId((byte)0x77)
+						.setSuppressSSID((byte)0x88)
+						.setSsid("Helloworld");
 				ACAMPData acampData = new ACAMPData();
-				acampData.addMessageElement(msgEle);
-				acampData.addMessageElement(msgEle2);
-				acmap.setVersion((short)1)
-					 .setType((byte)0)
-					 .setAPID(1)
-					 .setSequenceNumber(888888888)
-					 .setMessageType((short)ACAMP.CONFIGURATION_RESPONSE)
-					 .setPayload(acampData);
-				byte[] data = acmap.serialize();
+				acampData.addMessageElement(msgEle.build());
+				acamp.setPayload(acampData);
+				byte[] data = acamp.serialize();
+				
 				ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
 						dstIpAddr, srcIpAddr, dstPort, srcPort, data);
 				return Command.STOP;
