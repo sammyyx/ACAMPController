@@ -43,11 +43,13 @@ public class ACAMPData extends BasePacket implements IPacket {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		while(bb.hasRemaining()) {
 			ACAMPMsgEle msgEle = new ACAMPMsgEle();
-			bb.getShort();//跳过类型字段的解析
-			int totalLength = ACAMPProtocol.LEN_ME_HEADER + (int)(bb.getShort() & 0x0ffffffff);
-			byte[] payloadData = new byte[totalLength];
-			bb.get(payloadData);
- 			msgEle.deserialize(payloadData, 0, totalLength);
+			msgEle.messageElementType = ACAMPProtocol.getMsgEleType(bb.getShort());
+			msgEle.messageElementLength = (int)(bb.getShort() & 0x0ffff);
+			if(msgEle.messageElementLength != 0) {
+				byte[] payloadData = new byte[msgEle.messageElementLength];
+				bb.get(payloadData);
+	 			msgEle.deserialize(payloadData, 0, payloadData.length);
+			}
  			msgEleList.add(msgEle);
 		}
 		return this;

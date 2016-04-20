@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.floodlightcontroller.acamp.msgele.ACInetAddr;
 import net.floodlightcontroller.acamp.msgele.ACMacAddr;
-import net.floodlightcontroller.acamp.msgele.APBoardAddr;
+import net.floodlightcontroller.acamp.msgele.APBoardData;
 import net.floodlightcontroller.acamp.msgele.APDescriptor;
 import net.floodlightcontroller.acamp.msgele.APInetAddr;
 import net.floodlightcontroller.acamp.msgele.APLocation;
@@ -19,6 +19,7 @@ import net.floodlightcontroller.acamp.msgele.AssignedAPID;
 import net.floodlightcontroller.acamp.msgele.DeleteMacACLEntry;
 import net.floodlightcontroller.acamp.msgele.DeleteStation;
 import net.floodlightcontroller.acamp.msgele.MultiDomainCapability;
+import net.floodlightcontroller.acamp.msgele.ReasonCode;
 import net.floodlightcontroller.acamp.msgele.ResultCode;
 import net.floodlightcontroller.acamp.msgele.StationEvent;
 import net.floodlightcontroller.acamp.msgele.SupportedRates;
@@ -127,14 +128,14 @@ public class ACAMPProtocol {
 	static {
 		msgEleClassMap = new HashMap<MsgEleType, Class<? extends IPacket>>();
 		msgEleClassMap.put(MsgEleType.RESULT_CODE, ResultCode.class);
-		msgEleClassMap.put(MsgEleType.REASON_CODE, ResultCode.class);
+		msgEleClassMap.put(MsgEleType.REASON_CODE, ReasonCode.class);
 		msgEleClassMap.put(MsgEleType.ASSIGNED_APID, AssignedAPID.class);
 		msgEleClassMap.put(MsgEleType.AP_MAC_ADDR, APMacAddr.class);
 		msgEleClassMap.put(MsgEleType.AP_INET_ADDR, APInetAddr.class);
 		msgEleClassMap.put(MsgEleType.AP_NAME, APName.class);
 		msgEleClassMap.put(MsgEleType.AP_DESCRIPTION, APDescriptor.class);
 		msgEleClassMap.put(MsgEleType.AP_LOCATION, APLocation.class);
-		msgEleClassMap.put(MsgEleType.AP_BOARD_DATA, APBoardAddr.class);
+		msgEleClassMap.put(MsgEleType.AP_BOARD_DATA, APBoardData.class);
 		msgEleClassMap.put(MsgEleType.AC_MAC_ADDR, ACMacAddr.class);
 		msgEleClassMap.put(MsgEleType.AC_INET_ADDR, ACInetAddr.class);
 		msgEleClassMap.put(MsgEleType.TIME_STAMP, Timestamp.class);
