@@ -6,12 +6,12 @@ import net.floodlightcontroller.acamp.agent.ACAMPProtocol;
 
 public class ACAMP extends BasePacket implements IPacket {
 
-	private short version;			//版本号
-	private byte type;				//消息类型
-	private int apid;				//APID
-	private long sequenceNumber;	//序	列号
-	private short messageType;		//消息类型
-	private int messageLength;		//不需要显性设置，解序列化自动填充
+	private short version;							//版本号
+	private ACAMPProtocol.MsgType type;				//消息类型
+	private int apid;								//APID
+	private long sequenceNumber;					//序	列号
+	private short messageType;						//消息类型
+	private int messageLength;						//不需要显性设置，解序列化自动填充
 
 	@Override
 	public byte[] serialize() {
@@ -27,7 +27,7 @@ public class ACAMP extends BasePacket implements IPacket {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.putInt(ACAMPProtocol.PREAMBLE);
 		bb.put((byte)this.version);
-		bb.put(this.type);
+		bb.put(this.type.value);
 		bb.putShort((short)this.apid);
 		bb.putInt((int)this.sequenceNumber);
 		bb.putShort(this.messageType);
@@ -44,7 +44,7 @@ public class ACAMP extends BasePacket implements IPacket {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.getInt();
 		this.version = (short)(bb.get() & 0x0ff);
-		this.type = bb.get();
+		this.type = ACAMPProtocol.MsgType.getMsgType(bb.get());
 		this.apid = (int)(bb.getShort() & 0x0ffff);
 		this.sequenceNumber = (long)(bb.getInt() & 0x0ffffffff);
 		this.messageType = bb.getShort();
@@ -66,10 +66,10 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.version = version;
 		return this;
 	}
-	public byte getType() {
+	public ACAMPProtocol.MsgType getType() {
 		return type;
 	}
-	public ACAMP setType(byte type) {
+	public ACAMP setType(ACAMPProtocol.MsgType type) {
 		this.type = type;
 		return this;
 	}

@@ -43,7 +43,7 @@ public class ACAMPData extends BasePacket implements IPacket {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		while(bb.hasRemaining()) {
 			ACAMPMsgEle msgEle = new ACAMPMsgEle();
-			msgEle.messageElementType = ACAMPProtocol.getMsgEleType(bb.getShort());
+			msgEle.messageElementType = ACAMPProtocol.MsgEleType.getMsgEleType(bb.getShort());
 			msgEle.messageElementLength = (int)(bb.getShort() & 0x0ffff);
 			if(msgEle.messageElementLength != 0) {
 				byte[] payloadData = new byte[msgEle.messageElementLength];

@@ -75,52 +75,74 @@ public class ACAMPProtocol {
 	private final static byte VALUE_STAT_RESPONSE 				= 0x42;
 	private final static byte VALUE_INVALID_MSG					= 0x00;
 	
-	public static enum MsgType {
+	public enum MsgType {
 		
-		REGISTER_REQUEST,
-		REGISTER_RESPONSE,
-		DISCONNET_REQUEST,
-		DISCONNET_RESPONSE,
-		CONFIGURATION_REQUEST,
-		CONFIGURATION_RESPONSE,
-		CONFIGURATION_RESET_REQ,
-		CONFIGURATION_RESET_RSP,
-		STATISTIC_STAT_RP,
-		STATISTIC_STAT_QUERY,
-		STATISTIC_STAT_REPLY,
-		STAT_REQUEST,
-		STAT_RESPONSE,
-		INVALID_MSG;
-		
+		REGISTER_REQUEST(VALUE_REGISTER_REQUEST),
+		REGISTER_RESPONSE(VALUE_REGISTER_RESPONSE),
+		DISCONNET_REQUEST(VALUE_DISCONNET_REQUEST),
+		DISCONNET_RESPONSE(VALUE_DISCONNET_RESPONSE),
+		CONFIGURATION_REQUEST(VALUE_CONFIGURATION_REQUEST),
+		CONFIGURATION_RESPONSE(VALUE_CONFIGURATION_RESPONSE),
+		CONFIGURATION_RESET_REQ(VALUE_CONFIGURATION_RESET_REQ),
+		CONFIGURATION_RESET_RSP(VALUE_CONFIGURATION_RESET_RSP),
+		STATISTIC_STAT_RP(VALUE_STATISTIC_STAT_RP),
+		STATISTIC_STAT_QUERY(VALUE_STATISTIC_STAT_QUERY),
+		STATISTIC_STAT_REPLY(VALUE_STATISTIC_STAT_REPLY),
+		STAT_REQUEST(VALUE_STAT_REQUEST),
+		STAT_RESPONSE(VALUE_STAT_RESPONSE),
+		INVALID_MSG(VALUE_INVALID_MSG);
+		public byte value;
+		private MsgType(byte value) {
+			this.value = value;
+		}
+		public static MsgType getMsgType(byte value) {
+			for(MsgType msgType: MsgType.values()) {
+				if(msgType.value == value) {
+					return msgType;
+				}
+			}
+			return MsgType.INVALID_MSG;
+		}
 	}
 	
-	public static enum MsgEleType {
+	public enum MsgEleType {
 		
-		RESULT_CODE,
-		REASON_CODE,
-		ASSIGNED_APID,
-		AP_MAC_ADDR,
-		AP_INET_ADDR,
-		AP_NAME,
-		AP_DESCRIPTION,
-		AP_LOCATION,
-		AP_BOARD_DATA,
-		AC_MAC_ADDR,
-		AC_INET_ADDR,
-		TIME_STAMP,
-		WLAN_INFO,
-		AP_RADIO_INFO,
-		ANTENNA,
-		TX_POWER,
-		MULTI_DOMAIN_CAP,
-		SUPPORTED_RATES,
-		ADD_MAC_ACL_ENTRY,
-		DEL_MAC_ACL_ENTRY,
-		ADD_STATION,
-		DEL_STATION,
-		STATION_EVENT,
-		INVALID_MSG_ELE;
-		
+		RESULT_CODE(VALUE_RESULT_CODE),
+		REASON_CODE(VALUE_REASON_CODE),
+		ASSIGNED_APID(VALUE_ASSIGNED_APID),
+		AP_MAC_ADDR(VALUE_AP_MAC_ADDR),
+		AP_INET_ADDR(VALUE_AP_INET_ADDR),
+		AP_NAME(VALUE_AP_NAME),
+		AP_DESCRIPTION(VALUE_AP_DESCRIPTION),
+		AP_LOCATION(VALUE_AP_LOCATION),
+		AP_BOARD_DATA(VALUE_AP_BOARD_DATA),
+		AC_MAC_ADDR(VALUE_AC_MAC_ADDR),
+		AC_INET_ADDR(VALUE_AC_INET_ADDR),
+		TIME_STAMP(VALUE_TIME_STAMP),
+		WLAN_INFO(VALUE_WLAN_INFO),
+		AP_RADIO_INFO(VALUE_AP_RADIO_INFO),
+		ANTENNA(VALUE_ANTENNA),
+		TX_POWER(VALUE_TX_POWER),
+		MULTI_DOMAIN_CAP(VALUE_MULTI_DOMAIN_CAP),
+		SUPPORTED_RATES(VALUE_SUPPORTED_RATES),
+		ADD_MAC_ACL_ENTRY(VALUE_ADD_MAC_ACL_ENTRY),
+		DEL_MAC_ACL_ENTRY(VALUE_DEL_MAC_ACL_ENTRY),
+		ADD_STATION(VALUE_ADD_STATION),
+		DEL_STATION(VALUE_DEL_STATION),
+		STATION_EVENT(VALUE_STATION_EVENT),
+		INVALID_MSG_ELE(VALUE_INVALID_MSG_ELE);
+		public short value;
+		private MsgEleType(short value) {
+			this.value = value;
+		}
+		public static MsgEleType getMsgEleType(short value) {
+			for(MsgEleType msgEleType: MsgEleType.values()) {
+				if(msgEleType.value == value) {
+					return msgEleType;
+				}
+			}
+			return MsgEleType.INVALID_MSG_ELE;
+		}
 	}
 	
 	public static Map<MsgEleType, Class<? extends IPacket>> msgEleClassMap;
@@ -151,176 +173,6 @@ public class ACAMPProtocol {
 		msgEleClassMap.put(MsgEleType.DEL_STATION, DeleteStation.class);
 		msgEleClassMap.put(MsgEleType.STATION_EVENT, StationEvent.class);
 	}
-	
-	public static ACAMPProtocol.MsgType getMsgType(byte msgValue) {
-		switch(msgValue) {
-		case VALUE_REGISTER_REQUEST:
-			return ACAMPProtocol.MsgType.REGISTER_REQUEST;
-		case VALUE_REGISTER_RESPONSE:
-			return ACAMPProtocol.MsgType.CONFIGURATION_RESPONSE;
-		case VALUE_DISCONNET_REQUEST:
-			return ACAMPProtocol.MsgType.DISCONNET_REQUEST;
-		case VALUE_DISCONNET_RESPONSE:
-			return ACAMPProtocol.MsgType.DISCONNET_RESPONSE;
-		case VALUE_CONFIGURATION_REQUEST:
-			return ACAMPProtocol.MsgType.CONFIGURATION_REQUEST;
-		case VALUE_CONFIGURATION_RESPONSE:
-			return ACAMPProtocol.MsgType.CONFIGURATION_RESPONSE;
-		case VALUE_CONFIGURATION_RESET_REQ:
-			return ACAMPProtocol.MsgType.CONFIGURATION_RESET_REQ;
-		case VALUE_CONFIGURATION_RESET_RSP:
-			return ACAMPProtocol.MsgType.CONFIGURATION_RESET_RSP;
-		case VALUE_STATISTIC_STAT_RP:
-			return ACAMPProtocol.MsgType.STATISTIC_STAT_RP;
-		case VALUE_STATISTIC_STAT_QUERY:
-			return ACAMPProtocol.MsgType.STATISTIC_STAT_QUERY;
-		case VALUE_STATISTIC_STAT_REPLY:
-			return ACAMPProtocol.MsgType.STATISTIC_STAT_REPLY;
-		case VALUE_STAT_REQUEST:
-			return ACAMPProtocol.MsgType.STAT_REQUEST;
-		case VALUE_STAT_RESPONSE:
-			return ACAMPProtocol.MsgType.STAT_RESPONSE;
-		default:
-			return ACAMPProtocol.MsgType.INVALID_MSG;
-		}
-	}
 
-	public static byte getMsgValue(MsgType msgType) {
-		switch(msgType) {
-		case REGISTER_REQUEST:
-			return VALUE_REGISTER_REQUEST;
-		case REGISTER_RESPONSE:
-			return VALUE_REGISTER_RESPONSE;
-		case DISCONNET_REQUEST:
-			return VALUE_DISCONNET_REQUEST;
-		case DISCONNET_RESPONSE:
-			return VALUE_DISCONNET_RESPONSE;
-		case CONFIGURATION_REQUEST:
-			return VALUE_CONFIGURATION_REQUEST;
-		case CONFIGURATION_RESPONSE:
-			return VALUE_CONFIGURATION_RESPONSE;
-		case CONFIGURATION_RESET_REQ:
-			return VALUE_CONFIGURATION_RESET_REQ;
-		case CONFIGURATION_RESET_RSP:
-			return VALUE_CONFIGURATION_RESET_RSP;
-		case STATISTIC_STAT_RP:
-			return VALUE_STATISTIC_STAT_RP;
-		case STATISTIC_STAT_QUERY:
-			return VALUE_STATISTIC_STAT_QUERY;
-		case STATISTIC_STAT_REPLY:
-			return VALUE_STATISTIC_STAT_REPLY;
-		case STAT_REQUEST:
-			return VALUE_STAT_REQUEST;
-		case STAT_RESPONSE:
-			return VALUE_STAT_RESPONSE;
-		default:
-			return VALUE_INVALID_MSG;
-		}
-	}
-	
-	public static ACAMPProtocol.MsgEleType getMsgEleType(short value) {
-		switch(value) {
-		case VALUE_RESULT_CODE:
-			return ACAMPProtocol.MsgEleType.RESULT_CODE;
-		case VALUE_REASON_CODE:
-			return ACAMPProtocol.MsgEleType.REASON_CODE;
-		case VALUE_ASSIGNED_APID:
-			return ACAMPProtocol.MsgEleType.ASSIGNED_APID;
-		case VALUE_AP_MAC_ADDR:
-			return ACAMPProtocol.MsgEleType.AP_MAC_ADDR;
-		case VALUE_AP_INET_ADDR:
-			return ACAMPProtocol.MsgEleType.AP_INET_ADDR;
-		case VALUE_AP_NAME:
-			return ACAMPProtocol.MsgEleType.AP_NAME;
-		case VALUE_AP_DESCRIPTION:
-			return ACAMPProtocol.MsgEleType.AP_DESCRIPTION;
-		case VALUE_AP_LOCATION:
-			return ACAMPProtocol.MsgEleType.AP_LOCATION;
-		case VALUE_AP_BOARD_DATA:
-			return ACAMPProtocol.MsgEleType.AP_BOARD_DATA;
-		case VALUE_AC_MAC_ADDR:
-			return ACAMPProtocol.MsgEleType.AC_MAC_ADDR;
-		case VALUE_AC_INET_ADDR:
-			return ACAMPProtocol.MsgEleType.AC_INET_ADDR;
-		case VALUE_TIME_STAMP:
-			return ACAMPProtocol.MsgEleType.TIME_STAMP;
-		case VALUE_WLAN_INFO:
-			return ACAMPProtocol.MsgEleType.WLAN_INFO;
-		case VALUE_AP_RADIO_INFO:
-			return ACAMPProtocol.MsgEleType.AP_RADIO_INFO;
-		case VALUE_ANTENNA:
-			return ACAMPProtocol.MsgEleType.ANTENNA;
-		case VALUE_TX_POWER:
-			return ACAMPProtocol.MsgEleType.TX_POWER;
-		case VALUE_SUPPORTED_RATES:
-			return ACAMPProtocol.MsgEleType.SUPPORTED_RATES;
-		case VALUE_ADD_MAC_ACL_ENTRY:
-			return ACAMPProtocol.MsgEleType.ADD_MAC_ACL_ENTRY;
-		case VALUE_DEL_MAC_ACL_ENTRY:
-			return ACAMPProtocol.MsgEleType.DEL_MAC_ACL_ENTRY;
-		case VALUE_ADD_STATION:
-			return ACAMPProtocol.MsgEleType.ADD_STATION;
-		case VALUE_STATION_EVENT:
-			return ACAMPProtocol.MsgEleType.DEL_STATION;
-		case VALUE_DEL_STATION:
-			return ACAMPProtocol.MsgEleType.STATION_EVENT;
-		default:
-			return ACAMPProtocol.MsgEleType.INVALID_MSG_ELE;
-		}
-	}
-	
-	
-	public static short getMsgEleValue(MsgEleType msgEleType) {
-		switch(msgEleType) {
-		case RESULT_CODE:
-			return VALUE_RESULT_CODE;
-		case REASON_CODE:
-			return VALUE_REASON_CODE;
-		case ASSIGNED_APID:
-			return VALUE_ASSIGNED_APID;
-		case AP_MAC_ADDR:
-			return VALUE_AP_MAC_ADDR;
-		case AP_INET_ADDR:
-			return VALUE_AP_INET_ADDR;
-		case AP_NAME:
-			return VALUE_AP_NAME;
-		case AP_DESCRIPTION:
-			return VALUE_AP_DESCRIPTION;
-		case AP_LOCATION:
-			return VALUE_AP_LOCATION;
-		case AP_BOARD_DATA:
-			return VALUE_AP_BOARD_DATA;
-		case AC_MAC_ADDR:
-			return VALUE_AC_MAC_ADDR;
-		case AC_INET_ADDR:
-			return VALUE_AC_INET_ADDR;
-		case TIME_STAMP:
-			return VALUE_TIME_STAMP;
-		case WLAN_INFO:
-			return VALUE_WLAN_INFO;
-		case AP_RADIO_INFO:
-			return VALUE_AP_RADIO_INFO;
-		case ANTENNA:
-			return VALUE_ANTENNA;
-		case TX_POWER:
-			return VALUE_TX_POWER;
-		case MULTI_DOMAIN_CAP:
-			return VALUE_MULTI_DOMAIN_CAP;
-		case SUPPORTED_RATES:
-			return VALUE_SUPPORTED_RATES;
-		case ADD_MAC_ACL_ENTRY:
-			return VALUE_ADD_MAC_ACL_ENTRY;
-		case DEL_MAC_ACL_ENTRY:
-			return VALUE_DEL_MAC_ACL_ENTRY;
-		case ADD_STATION:
-			return VALUE_ADD_STATION;
-		case DEL_STATION:
-			return VALUE_DEL_STATION;
-		case STATION_EVENT:
-			return VALUE_STATION_EVENT;
-		default:
-			return VALUE_INVALID_MSG_ELE;
-		}
-	}
 	
 }

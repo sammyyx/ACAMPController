@@ -18,7 +18,7 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 		}
 		byte[] data = new byte[this.messageElementLength + ACAMPProtocol.LEN_ME_HEADER];
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		bb.putShort(ACAMPProtocol.getMsgEleValue(this.messageElementType));
+		bb.putShort(this.messageElementType.value);
 		bb.putShort((short)messageElementLength);
 		if(this.messageElementLength != 0) {
 			bb.put(payloadData);
