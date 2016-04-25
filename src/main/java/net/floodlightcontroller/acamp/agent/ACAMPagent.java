@@ -163,6 +163,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				ACAMP acamp = new ACAMP();
 				ACAMPMsgEle msgEle = new ACAMPMsgEle();
 				WlanInformation wlanInfo = (WlanInformation) msgEle.createBuilder(ACAMPProtocol.MsgEleType.WLAN_INFO);
+				String key = new String("Hello world");
 				wlanInfo.setAuthType((byte)0x11)
 						.setCapability((short)0x2222)
 						.setGroupTSC(new byte[6])
@@ -172,7 +173,8 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 						.setRadioId((byte)0x66)
 						.setWlanId((byte)0x77)
 						.setSuppressSSID((byte)0x88)
-						.setSsid("Helloworld");
+						.setSsid("Helloworld")
+						.setKey(key.getBytes());
 				ACAMPData acampData = new ACAMPData();
 				acampData.addMessageElement(msgEle.build());
 				acamp.setPayload(acampData);

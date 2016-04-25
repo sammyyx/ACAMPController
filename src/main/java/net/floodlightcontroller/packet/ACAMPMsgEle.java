@@ -30,8 +30,6 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 	public ACAMPMsgEle deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		this.messageElementType = ACAMPProtocol.getMsgEleType(bb.getShort());
-		this.messageElementLength = (int)(bb.getShort() & 0x0ffffffff);
 		Class<? extends IPacket> clazz = ACAMPProtocol.msgEleClassMap.get(this.messageElementType);
 		try {
 			this.payload = clazz.newInstance();
