@@ -12,4 +12,4 @@ findbugs-results
 /thrift
 *.idea/*
 .metadata/
-SyncDB/
+/SyncDB
