@@ -1,22 +1,39 @@
 package net.floodlightcontroller.acamp.msgele;
 
+import org.projectfloodlight.openflow.types.MacAddress;
+
 import net.floodlightcontroller.packet.BasePacket;
 import net.floodlightcontroller.packet.IPacket;
 import net.floodlightcontroller.packet.PacketParsingException;
 
 public class DeleteStation extends BasePacket implements IPacket {
 
+	private MacAddress staMacAddress;
 	@Override
 	public byte[] serialize() {
-		// TODO Auto-generated method stub
-		return null;
+		byte[] staMacAddressBytes = null;
+		if(staMacAddress != null) {
+			staMacAddressBytes = staMacAddress.getBytes();
+		}
+		return staMacAddressBytes;
 	}
 
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		// TODO Auto-generated method stub
-		return null;
+		if(data.length != 0) {
+			this.staMacAddress = MacAddress.of(data);
+		}
+		return this;
 	}
+
+	public MacAddress getStaMacAddress() {
+		return staMacAddress;
+	}
+
+	public void setStaMacAddress(MacAddress staMacAddress) {
+		this.staMacAddress = staMacAddress;
+	}
+	
 
 }

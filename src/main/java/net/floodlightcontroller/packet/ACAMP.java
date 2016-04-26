@@ -1,54 +1,37 @@
 package net.floodlightcontroller.packet;
 
 import java.nio.ByteBuffer;
-import java.util.LinkedList;
+
+import net.floodlightcontroller.acamp.agent.ACAMPProtocol;
 
 public class ACAMP extends BasePacket implements IPacket {
 
-	/*****************所有消息常量在此处定义*********************/
-	private static final int PREAMBLE 					= 0x01;
-	private static final int HEADER_LENGTH 				= 16;
-	/*****************所有消息类型在此处定义*********************/
-	public final static byte REGISTER_REQUEST 			= 0x11;
-	public final static byte REGISTER_RESPONSE 			= 0x12;
-	public final static byte DISCONNET_REQUEST 			= 0x13;
-	public final static byte DISCONNET_RESPONSE 		= 0x14;
-	public final static byte CONFIGURATION_REQUEST 		= 0x21;
-	public final static byte CONFIGURATION_RESPONSE 	= 0x22;
-	public final static byte CONFIGURATION_RESET_REQ 	= 0x23;
-	public final static byte CONFIGURATION_RESET_RSP 	= 0x24;
-	public final static byte STATISTIC_STAT_RP 			= 0x31;
-	public final static byte STATISTIC_STAT_QUERY 		= 0x32;
-	public final static byte STATISTIC_STAT_REPLY 		= 0x33;
-	public final static byte STAT_REQUEST 				= 0x41;
-	public final static byte STAT_RESPONSE 				= 0x42;
-	/*********************************************************/
-	private byte version;								//版本号
-	private byte type;									//消息类型
-	private short apid;									//APID
-	private int sequenceNumber;							//序	列号
-	private short messageType;							//消息类型
-	private short messageLength;						//不需要显性设置，解序列化自动填充
+	private short version;							//版本号
+	private ACAMPProtocol.MsgType type;				//消息类型
+	private int apid;								//APID
+	private long sequenceNumber;					//序	列号
+	private short messageType;						//消息类型
+	private int messageLength;						//不需要显性设置，解序列化自动填充
 
 	@Override
 	public byte[] serialize() {
-		byte[] payloadData = null;						//ACAMP消息的载荷为ACAMPData
-		if(payload != null) {
-			payload.setParent(this);
-			payloadData = payload.serialize();
+		byte[] payloadData = null;	//ACAMP消息的载荷为ACAMPData
+		if(this.payload != null) {
+			this.payload.setParent(this);
+			payloadData = this.payload.serialize();
 		}
 		/* 消息长度等于头部长度加上载荷长度 */
-		this.messageLength = (short) (HEADER_LENGTH + ((payloadData == null) ? 
+		this.messageLength = (short) (ACAMPProtocol.LEN_ACAMP_HEADER + ((payloadData == null) ? 
 				0 : payloadData.length));
 		byte[] data = new byte[this.messageLength];
 		ByteBuffer bb = ByteBuffer.wrap(data);
-		bb.putInt(PREAMBLE);
-		bb.put(this.version);
-		bb.put(this.type);
-		bb.putShort(this.apid);
-		bb.putInt(this.sequenceNumber);
+		bb.putInt(ACAMPProtocol.PREAMBLE);
+		bb.put((byte)this.version);
+		bb.put(this.type.value);
+		bb.putShort((short)this.apid);
+		bb.putInt((int)this.sequenceNumber);
 		bb.putShort(this.messageType);
-		bb.putShort(this.messageLength);
+		bb.putShort((short)this.messageLength);
 		if(payloadData != null) {
 			bb.put(payloadData);
 		}
@@ -60,15 +43,15 @@ public class ACAMP extends BasePacket implements IPacket {
 			throws PacketParsingException {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.getInt();
-		this.version = bb.get();
-		this.type = bb.get();
-		this.apid = bb.getShort();
-		this.sequenceNumber = bb.getInt();
+		this.version = (short)(bb.get() & 0x0ff);
+		this.type = ACAMPProtocol.MsgType.getMsgType(bb.get());
+		this.apid = (int)(bb.getShort() & 0x0ffff);
+		this.sequenceNumber = (long)(bb.getInt() & 0x0ffffffff);
 		this.messageType = bb.getShort();
-		this.messageLength = bb.getShort();
+		this.messageLength = (int)(bb.getShort() & 0x0ffff);
 		if(bb.hasRemaining()) {
 			ACAMPData acampData = new ACAMPData();
-			int payloadLength = length - HEADER_LENGTH;
+			int payloadLength = length - ACAMPProtocol.LEN_ACAMP_HEADER;
 			byte[] payloadData = new byte[payloadLength];
 			bb.get(payloadData);
 			this.payload = acampData.deserialize(payloadData, 0, payloadLength);
@@ -76,31 +59,31 @@ public class ACAMP extends BasePacket implements IPacket {
 		return this;
 	}
 	
-	public byte getVersion() {
+	public short getVersion() {
 		return version;
 	}
-	public ACAMP setVersion(byte version) {
+	public ACAMP setVersion(short version) {
 		this.version = version;
 		return this;
 	}
-	public byte getType() {
+	public ACAMPProtocol.MsgType getType() {
 		return type;
 	}
-	public ACAMP setType(byte type) {
+	public ACAMP setType(ACAMPProtocol.MsgType type) {
 		this.type = type;
 		return this;
 	}
-	public short getAPID() {
+	public int getAPID() {
 		return apid;
 	}
-	public ACAMP setAPID(short aPID) {
+	public ACAMP setAPID(int aPID) {
 		apid = aPID;
 		return this;
 	}
-	public int getSequenceNumber() {
+	public long getSequenceNumber() {
 		return sequenceNumber;
 	}
-	public ACAMP setSequenceNumber(int sequenceNumber) {
+	public ACAMP setSequenceNumber(long sequenceNumber) {
 		this.sequenceNumber = sequenceNumber;
 		return this;
 	}
@@ -111,10 +94,10 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.messageType = messageType;
 		return this;
 	}
-	public short getMessageLength() {
+	public int getMessageLength() {
 		return messageLength;
 	}
-	public ACAMP setMessageLength(short messageLength) {
+	public ACAMP setMessageLength(int messageLength) {
 		this.messageLength = messageLength;
 		return this;
 	}

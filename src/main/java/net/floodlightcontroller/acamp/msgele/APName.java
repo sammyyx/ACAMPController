@@ -6,17 +6,22 @@ import net.floodlightcontroller.packet.PacketParsingException;
 
 public class APName extends BasePacket implements IPacket {
 
+	String apName;
+	
 	@Override
 	public byte[] serialize() {
-		// TODO Auto-generated method stub
-		return null;
+		byte[] nameBytes = null;
+		if(this.apName != null) {
+			nameBytes = this.apName.getBytes();
+		}
+		return nameBytes;
 	}
 
 	@Override
 	public IPacket deserialize(byte[] data, int offset, int length)
 			throws PacketParsingException {
-		// TODO Auto-generated method stub
-		return null;
+		this.apName = new String(data);
+		return this;
 	}
 
 }
