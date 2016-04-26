@@ -7,10 +7,10 @@ import net.floodlightcontroller.acamp.agent.ACAMPProtocol;
 public class ACAMP extends BasePacket implements IPacket {
 
 	private short version;							//版本号
-	private ACAMPProtocol.MsgType type;				//消息类型
+	private byte type;								//消息类型
 	private int apid;								//APID
 	private long sequenceNumber;					//序	列号
-	private short messageType;						//消息类型
+	private ACAMPProtocol.MsgType  messageType;		//消息类型
 	private int messageLength;						//不需要显性设置，解序列化自动填充
 
 	@Override
@@ -27,10 +27,10 @@ public class ACAMP extends BasePacket implements IPacket {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.putInt(ACAMPProtocol.PREAMBLE);
 		bb.put((byte)this.version);
-		bb.put(this.type.value);
+		bb.put((byte)this.type);
 		bb.putShort((short)this.apid);
 		bb.putInt((int)this.sequenceNumber);
-		bb.putShort(this.messageType);
+		bb.putShort(this.messageType.value);
 		bb.putShort((short)this.messageLength);
 		if(payloadData != null) {
 			bb.put(payloadData);
@@ -44,10 +44,10 @@ public class ACAMP extends BasePacket implements IPacket {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		bb.getInt();
 		this.version = (short)(bb.get() & 0x0ff);
-		this.type = ACAMPProtocol.MsgType.getMsgType(bb.get());
+		this.type = bb.get();
 		this.apid = (int)(bb.getShort() & 0x0ffff);
 		this.sequenceNumber = (long)(bb.getInt() & 0x0ffffffff);
-		this.messageType = bb.getShort();
+		this.messageType = ACAMPProtocol.MsgType.getMsgType(bb.get());
 		this.messageLength = (int)(bb.getShort() & 0x0ffff);
 		if(bb.hasRemaining()) {
 			ACAMPData acampData = new ACAMPData();
@@ -66,10 +66,10 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.version = version;
 		return this;
 	}
-	public ACAMPProtocol.MsgType getType() {
+	public byte getType() {
 		return type;
 	}
-	public ACAMP setType(ACAMPProtocol.MsgType type) {
+	public ACAMP setType(byte type) {
 		this.type = type;
 		return this;
 	}
@@ -87,10 +87,10 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.sequenceNumber = sequenceNumber;
 		return this;
 	}
-	public short getMessageType() {
+	public ACAMPProtocol.MsgType getMessageType() {
 		return messageType;
 	}
-	public ACAMP setMessageType(short messageType) {
+	public ACAMP setMessageType(ACAMPProtocol.MsgType messageType) {
 		this.messageType = messageType;
 		return this;
 	}

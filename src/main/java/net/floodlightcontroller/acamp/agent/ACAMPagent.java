@@ -22,6 +22,7 @@ import org.projectfloodlight.openflow.types.TransportPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.floodlightcontroller.acamp.msgele.ResultCode;
 import net.floodlightcontroller.acamp.msgele.WlanInformation;
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.IFloodlightProviderService;
@@ -32,7 +33,6 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.packet.ACAMP;
-import net.floodlightcontroller.packet.ACAMPData;
 import net.floodlightcontroller.packet.ACAMPMsgEle;
 import net.floodlightcontroller.packet.Data;
 import net.floodlightcontroller.packet.Ethernet;
@@ -160,28 +160,71 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					e.printStackTrace();
 				}
 				
-				ACAMP acamp = new ACAMP();
-				ACAMPMsgEle msgEle = new ACAMPMsgEle();
-				WlanInformation wlanInfo = (WlanInformation) msgEle.createBuilder(ACAMPProtocol.MsgEleType.WLAN_INFO);
-				String key = new String("Hello world");
-				wlanInfo.setAuthType((byte)0x11)
-						.setCapability((short)0x2222)
-						.setGroupTSC(new byte[6])
-						.setKeyIndex((byte)0x33)
-						.setKeyStatus((byte)0x44)
-						.setQos((byte)0x55)
-						.setRadioId((byte)0x66)
-						.setWlanId((byte)0x77)
-						.setSuppressSSID((byte)0x88)
-						.setSsid("Helloworld")
-						.setKey(key.getBytes());
-				ACAMPData acampData = new ACAMPData();
-				acampData.addMessageElement(msgEle.build());
-				acamp.setPayload(acampData);
-				byte[] data = acamp.serialize();
+				ACAMPFsm acampFsm1 = new ACAMPFsm();
+				switch(recv.getMessageType()) {
 				
-				ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
-						dstIpAddr, srcIpAddr, dstPort, srcPort, data);
+				case REGISTER_REQUEST:
+				{
+					acampFsm1.acceptRegistry();
+					ACAMPMsgEle msgEle1 = new ACAMPMsgEle();
+					ResultCode resultCode = (ResultCode)msgEle1.createBuilder(ACAMPProtocol.MsgEleType.RESULT_CODE);
+					resultCode.setResultCode((byte)0x01);
+					ACAMPEncapsulate AP1 = new ACAMPEncapsulate();
+					AP1.setVersion((short)0x0001)
+					   .setApid(66)
+					   .setMessageType(ACAMPProtocol.MsgType.REGISTER_RESPONSE)
+					   .setVersion((short)0x0001)
+					   .setType((byte)0x00)
+					   .setSequenceNum(888888888888L);
+					ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
+							dstIpAddr, srcIpAddr, dstPort, srcPort, AP1.createACAMPMessage(msgEle1));
+					break;
+				}
+				case DISCONNET_RESPONSE:
+					break;
+				case CONFIGURATION_REQUEST:
+				{
+					acampFsm1.recvConfigReq();
+					ACAMPMsgEle msgEle = new ACAMPMsgEle();
+					WlanInformation wlanInfo = (WlanInformation) msgEle.createBuilder(ACAMPProtocol.MsgEleType.WLAN_INFO);
+					String key = new String("Hello world");
+					wlanInfo.setAuthType((byte)0x11)
+							.setCapability((short)0x2222)
+							.setGroupTSC(new byte[6])
+							.setKeyIndex((byte)0x33)
+							.setKeyStatus((byte)0x44)
+							.setQos((byte)0x55)
+							.setRadioId((byte)0x66)
+							.setWlanId((byte)0x77)
+							.setSuppressSSID((byte)0x88)
+							.setSsid("Helloworld")
+							.setKey(key.getBytes());
+					ACAMPEncapsulate AP1 = new ACAMPEncapsulate();
+					AP1.setVersion((short)0x0001)
+					   .setApid(66)
+					   .setMessageType(ACAMPProtocol.MsgType.CONFIGURATION_RESPONSE)
+					   .setVersion((short)0x0001)
+					   .setType((byte)0x00)
+					   .setSequenceNum(888888888888L);
+					byte[] data = AP1.createACAMPMessage(msgEle);
+					ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
+							dstIpAddr, srcIpAddr, dstPort, srcPort, data);
+					break;	
+				}
+				case CONFIGURATION_RESET_RSP:
+					break;
+				case STATISTIC_STAT_RP:
+					break;
+				case STATISTIC_STAT_REPLY:
+					break;
+				case STAT_RESPONSE:
+					break;
+				case INVALID_MSG:
+					break;
+				default:
+					break;
+					
+				}
 				return Command.STOP;
 			}
 			break;
