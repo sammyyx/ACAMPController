@@ -39,15 +39,27 @@ import net.floodlightcontroller.packet.Ethernet;
 import net.floodlightcontroller.packet.IPv4;
 import net.floodlightcontroller.packet.PacketParsingException;
 import net.floodlightcontroller.packet.UDP;
+import net.floodlightcontroller.restserver.IRestApiService;
 
 public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 
 	protected static Logger logger;
-	protected IFloodlightProviderService floodlightProvider;
 	
-	private static void sendMessage(IOFSwitch sw, OFPort inPort, MacAddress srcMac, MacAddress dstMac, 
-			IPv4Address srcAddress, IPv4Address dstAddress, TransportPort srcPort, 
-			TransportPort dstPort, byte[] acamp_bytes) {
+	//为一个AP所设的静态变量供其它类调用
+	protected static IOFSwitch attachedSwitch;
+	protected static OFPort inPort;
+	protected static MacAddress srcMac;
+	protected static MacAddress dstMac;
+	protected static IPv4Address srcAddress;
+	protected static IPv4Address dstAddress;
+	protected static TransportPort srcPort;
+	protected static TransportPort dstPort;
+	protected static ACAMPFsm acampFsm1 = new ACAMPFsm();
+	
+	protected IFloodlightProviderService floodlightProvider;
+	protected IRestApiService restApiService;
+	
+	private static void sendMessage(byte[] acamp_bytes) {
 		Ethernet l2 = new Ethernet();
 		l2.setSourceMACAddress(srcMac);
 		l2.setDestinationMACAddress(dstMac);
@@ -66,12 +78,12 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 		l3.setPayload(l4);
 		l2.setPayload(l3);
 		byte[] serializeData = l2.serialize();
-		OFPacketOut po = sw.getOFFactory().buildPacketOut()
+		OFPacketOut po = attachedSwitch.getOFFactory().buildPacketOut()
 				.setData(serializeData)
-				.setActions(Collections.singletonList((OFAction) sw.getOFFactory().actions().output(inPort, 0xffFFffFF)))
+				.setActions(Collections.singletonList((OFAction) attachedSwitch.getOFFactory().actions().output(inPort, 0xffFFffFF)))
 				.setInPort(OFPort.CONTROLLER)
 				.build();
-		sw.write(po);
+		attachedSwitch.write(po);
 	}
 	
 	@Override
@@ -107,6 +119,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 	public Collection<Class<? extends IFloodlightService>> getModuleDependencies() {
 		Collection<Class<? extends IFloodlightService>> depList = new ArrayList<Class<? extends IFloodlightService>>();
 		depList.add(IFloodlightProviderService.class);
+		depList.add(IRestApiService.class);
 		return depList;
 	}
 
@@ -114,6 +127,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 	public void init(FloodlightModuleContext context)
 			throws FloodlightModuleException {
 		floodlightProvider = context.getServiceImpl(IFloodlightProviderService.class);
+		restApiService = context.getServiceImpl(IRestApiService.class);
 		logger = LoggerFactory.getLogger(ACAMPagent.class);
 	}
 
@@ -153,6 +167,17 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 				if(ByteBuffer.wrap(recvData).getInt() != ACAMPProtocol.PREAMBLE) {
 					return Command.CONTINUE;
 				}
+				
+				//初始化静态变量
+				ACAMPagent.attachedSwitch = sw;
+				ACAMPagent.inPort = inPort;
+				ACAMPagent.srcMac = srcMacAddress;
+				ACAMPagent.dstMac = dstMacAddress;
+				ACAMPagent.srcAddress = srcIpAddr;
+				ACAMPagent.dstAddress = dstIpAddr;
+				ACAMPagent.srcPort = srcPort;
+				ACAMPagent.dstPort = dstPort;
+				
 				ACAMP recv = new ACAMP();
 				try {
 					recv.deserialize(recvData, 0, recvData.length);
@@ -160,14 +185,12 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					e.printStackTrace();
 				}
 				
-				ACAMPFsm acampFsm1 = new ACAMPFsm();
 				switch(recv.getMessageType()) {
-				
 				case REGISTER_REQUEST:
 				{
 					acampFsm1.acceptRegistry();
-					ACAMPMsgEle msgEle1 = new ACAMPMsgEle();
-					ResultCode resultCode = (ResultCode)msgEle1.createBuilder(ACAMPProtocol.MsgEleType.RESULT_CODE);
+					ACAMPMsgEle msgEle = new ACAMPMsgEle();
+					ResultCode resultCode = (ResultCode)msgEle.createBuilder(ACAMPProtocol.MsgEleType.RESULT_CODE);
 					resultCode.setResultCode((byte)0x01);
 					ACAMPEncapsulate AP1 = new ACAMPEncapsulate();
 					AP1.setVersion((short)0x0001)
@@ -175,13 +198,16 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					   .setMessageType(ACAMPProtocol.MsgType.REGISTER_RESPONSE)
 					   .setVersion((short)0x0001)
 					   .setType((byte)0x00)
-					   .setSequenceNum(888888888888L);
-					ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
-							dstIpAddr, srcIpAddr, dstPort, srcPort, AP1.createACAMPMessage(msgEle1));
+					   .setSequenceNum(Integer.MAX_VALUE);
+					byte[] data = AP1.createACAMPMessage(msgEle);
+					ACAMPagent.sendMessage(data);
 					break;
 				}
 				case DISCONNET_RESPONSE:
-					break;
+				{
+					acampFsm1.releaseControl();
+					break;	
+				}
 				case CONFIGURATION_REQUEST:
 				{
 					acampFsm1.recvConfigReq();
@@ -207,8 +233,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					   .setType((byte)0x00)
 					   .setSequenceNum(888888888888L);
 					byte[] data = AP1.createACAMPMessage(msgEle);
-					ACAMPagent.sendMessage(sw, inPort, dstMacAddress, srcMacAddress,
-							dstIpAddr, srcIpAddr, dstPort, srcPort, data);
+					ACAMPagent.sendMessage(data);
 					break;	
 				}
 				case CONFIGURATION_RESET_RSP:
@@ -223,7 +248,6 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					break;
 				default:
 					break;
-					
 				}
 				return Command.STOP;
 			}
@@ -234,5 +258,4 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 		}
 		return Command.CONTINUE;
 	}
-
 }
