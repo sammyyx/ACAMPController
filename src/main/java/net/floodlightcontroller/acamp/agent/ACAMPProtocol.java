@@ -60,20 +60,20 @@ public class ACAMPProtocol {
 	private final static short VALUE_STATION_EVENT 			= 0x0501;
 	private final static short VALUE_INVALID_MSG_ELE		= 0x0000;
 	/*********************************************************/
-	private final static byte VALUE_REGISTER_REQUEST 			= 0x11;
-	private final static byte VALUE_REGISTER_RESPONSE 			= 0x12;
-	private final static byte VALUE_DISCONNET_REQUEST 			= 0x13;
-	private final static byte VALUE_DISCONNET_RESPONSE 			= 0x14;
-	private final static byte VALUE_CONFIGURATION_REQUEST 		= 0x21;
-	private final static byte VALUE_CONFIGURATION_RESPONSE 		= 0x22;
-	private final static byte VALUE_CONFIGURATION_RESET_REQ 	= 0x23;
-	private final static byte VALUE_CONFIGURATION_RESET_RSP 	= 0x24;
-	private final static byte VALUE_STATISTIC_STAT_RP 			= 0x31;
-	private final static byte VALUE_STATISTIC_STAT_QUERY 		= 0x32;
-	private final static byte VALUE_STATISTIC_STAT_REPLY 		= 0x33;
-	private final static byte VALUE_STAT_REQUEST 				= 0x41;
-	private final static byte VALUE_STAT_RESPONSE 				= 0x42;
-	private final static byte VALUE_INVALID_MSG					= 0x00;
+	private final static short VALUE_REGISTER_REQUEST 			= 0x0011;
+	private final static short VALUE_REGISTER_RESPONSE 			= 0x0102;
+	private final static short VALUE_DISCONNET_REQUEST 			= 0x0103;
+	private final static short VALUE_DISCONNET_RESPONSE 		= 0x0104;
+	private final static short VALUE_CONFIGURATION_REQUEST 		= 0x0201;
+	private final static short VALUE_CONFIGURATION_RESPONSE 	= 0x0202;
+	private final static short VALUE_CONFIGURATION_RESET_REQ 	= 0x0203;
+	private final static short VALUE_CONFIGURATION_RESET_RSP 	= 0x0204;
+	private final static short VALUE_STATISTIC_STAT_RP 			= 0x0301;
+	private final static short VALUE_STATISTIC_STAT_QUERY 		= 0x0302;
+	private final static short VALUE_STATISTIC_STAT_REPLY 		= 0x0303;
+	private final static short VALUE_STAT_REQUEST 				= 0x0401;
+	private final static short VALUE_STAT_RESPONSE 				= 0x0402;
+	private final static short VALUE_INVALID_MSG				= 0x0000;
 	
 	public enum MsgType {
 		
@@ -91,11 +91,11 @@ public class ACAMPProtocol {
 		STAT_REQUEST(VALUE_STAT_REQUEST),
 		STAT_RESPONSE(VALUE_STAT_RESPONSE),
 		INVALID_MSG(VALUE_INVALID_MSG);
-		public byte value;
-		private MsgType(byte value) {
+		public short value;
+		private MsgType(short value) {
 			this.value = value;
 		}
-		public static MsgType getMsgType(byte value) {
+		public static MsgType getMsgType(short value) {
 			for(MsgType msgType: MsgType.values()) {
 				if(msgType.value == value) {
 					return msgType;

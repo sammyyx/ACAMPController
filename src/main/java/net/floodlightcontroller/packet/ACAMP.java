@@ -47,7 +47,7 @@ public class ACAMP extends BasePacket implements IPacket {
 		this.type = bb.get();
 		this.apid = (int)(bb.getShort() & 0x0ffff);
 		this.sequenceNumber = (long)(bb.getInt() & 0x0ffffffff);
-		this.messageType = ACAMPProtocol.MsgType.getMsgType(bb.get());
+		this.messageType = ACAMPProtocol.MsgType.getMsgType(bb.getShort());
 		this.messageLength = (int)(bb.getShort() & 0x0ffff);
 		if(bb.hasRemaining()) {
 			ACAMPData acampData = new ACAMPData();

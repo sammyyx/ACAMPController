@@ -27,6 +27,7 @@ public class ACAMPEncapsulate {
 				acampData.addMessageElement(me);
 			}
 			acamp.setPayload(acampData);
+			return acamp.serialize();
 		}
 		acamp.setPayload(null);
 		return acamp.serialize();
