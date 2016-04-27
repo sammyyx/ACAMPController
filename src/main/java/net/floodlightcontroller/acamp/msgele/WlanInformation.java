@@ -130,6 +130,7 @@ public class WlanInformation extends BasePacket implements IPacket {
 
 	public WlanInformation setKey(byte[] key) {
 		this.key = key;
+		this.keyLength = (short)key.length;
 		return this;
 	}
 
