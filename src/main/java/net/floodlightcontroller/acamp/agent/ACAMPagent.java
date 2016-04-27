@@ -59,6 +59,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 	protected IFloodlightProviderService floodlightProvider;
 	protected IRestApiService restApiService;
 	
+	//Send函数为所有需要发送Packet-out的报文设置
 	private static void sendMessage(byte[] acamp_bytes) {
 		Ethernet l2 = new Ethernet();
 		l2.setSourceMACAddress(srcMac);
@@ -135,6 +136,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 	public void startUp(FloodlightModuleContext context)
 			throws FloodlightModuleException {
 		floodlightProvider.addOFMessageListener(OFType.PACKET_IN, this);
+		restApiService.addRestletRoutable(new ACAMPWebRoutable());
 	}
 
 	@Override
