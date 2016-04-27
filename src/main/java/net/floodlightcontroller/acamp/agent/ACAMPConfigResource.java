@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.floodlightcontroller.acamp.msgele.Antenna;
+import net.floodlightcontroller.acamp.msgele.MultiDomainCapability;
 import net.floodlightcontroller.acamp.msgele.TxPower;
 import net.floodlightcontroller.acamp.msgele.WlanInformation;
 import net.floodlightcontroller.acamptemplate.TemplateAntenna;
@@ -60,6 +61,7 @@ public class ACAMPConfigResource extends ServerResource {
 		classMap.put("Wlan-Info", TemplateWlanInfo.class);
 		classMap.put("Antenna", TemplateAntenna.class);
 		classMap.put("Tx-Power", TemplateTxPower.class);
+		classMap.put("MultiDomainCapability", TemplateMultiDomainCap.class);
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		jsonMap = (Map)JSONObject.toBean(jsonObject, Map.class, classMap);
 		if(jsonMap == null) return;
@@ -107,6 +109,19 @@ public class ACAMPConfigResource extends ServerResource {
 			txPower.setNumberLevel(templateTxPower.getNumberLevel())
 				   .setPowerLevel(templateTxPower.getPowerLevel())
 				   .setRadioId(templateTxPower.getRadioId());
+			acampData.addMessageElement(msgEle.build());
+			break;
+		}
+		case "MultiDomainCapability":
+		{
+			ACAMPMsgEle msgEle = new ACAMPMsgEle();
+			TemplateMultiDomainCap templateMDC = (TemplateMultiDomainCap)entry.getValue();
+			MultiDomainCapability multiDC = (MultiDomainCapability)msgEle.createBuilder(ACAMPProtocol.MsgEleType.MULTI_DOMAIN_CAP);
+			multiDC.setFirstChannel(templateMDC.getFirstChannel())
+			   	   .setMaxTxPowerLevel(templateMDC.getMaxTxPowerLevel())
+			   	   .setNumberOfChannels(templateMDC.getNumberOfChannels())
+			   	   .setRadioID(templateMDC.getRadioId())
+			   	   .setReserve(templateMDC.getReserve());
 			acampData.addMessageElement(msgEle.build());
 			break;
 		}

@@ -44,40 +44,45 @@ public class MultiDomainCapability extends BasePacket implements IPacket {
 		return radioId;
 	}
 
-	public void setRadioID(short radioIp) {
+	public MultiDomainCapability setRadioID(short radioIp) {
 		this.radioId = radioIp;
+		return this;
 	}
 
 	public byte getReserve() {
 		return reserve;
 	}
 
-	public void setReserve(byte reserve) {
+	public MultiDomainCapability setReserve(byte reserve) {
 		this.reserve = reserve;
+		return this;
 	}
 
 	public int getFirstChannel() {
 		return firstChannel;
 	}
 
-	public void setFirstChannel(int firstChannel) {
+	public MultiDomainCapability setFirstChannel(int firstChannel) {
 		this.firstChannel = firstChannel;
+		return this;
 	}
 
 	public int getNumberOfChannels() {
 		return numberOfChannels;
 	}
 
-	public void setNumberOfChannels(int numberOfChannels) {
+	public MultiDomainCapability setNumberOfChannels(int numberOfChannels) {
 		this.numberOfChannels = numberOfChannels;
+		return this;
 	}
 
 	public int getMaxTxPowerLevel() {
 		return maxTxPowerLevel;
 	}
 
-	public void setMaxTxPowerLevel(int maxTxPowerLevel) {
+	public MultiDomainCapability setMaxTxPowerLevel(int maxTxPowerLevel) {
 		this.maxTxPowerLevel = maxTxPowerLevel;
+		return this;
 	}
 
 	
