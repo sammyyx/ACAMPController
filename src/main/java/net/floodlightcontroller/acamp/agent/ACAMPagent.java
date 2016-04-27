@@ -63,17 +63,17 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 	//Send函数为所有需要发送Packet-out的报文设置
 	protected static void sendMessage(byte[] acamp_bytes) {
 		Ethernet l2 = new Ethernet();
-		l2.setSourceMACAddress(srcMac);
-		l2.setDestinationMACAddress(dstMac);
+		l2.setSourceMACAddress(dstMac);
+		l2.setDestinationMACAddress(srcMac);
 		l2.setEtherType(EthType.IPv4);
 		IPv4 l3 = new IPv4();
-		l3.setDestinationAddress(dstAddress);
-		l3.setSourceAddress(srcAddress);
+		l3.setDestinationAddress(srcAddress);
+		l3.setSourceAddress(dstAddress);
 		l3.setTtl((byte)64);
 		l3.setProtocol(IpProtocol.UDP);
 		UDP l4 = new UDP();
-		l4.setSourcePort(srcPort);
-		l4.setDestinationPort(dstPort);
+		l4.setSourcePort(dstPort);
+		l4.setDestinationPort(srcPort);
 		Data l7 = new Data();
 		l7.setData(acamp_bytes);
 		l4.setPayload(l7);
@@ -203,7 +203,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					     .setType((byte)0x00)
 					     .setSequenceNumber(Integer.MAX_VALUE);
 					ACAMPData acampData = new ACAMPData();
-					acampData.addMessageElement(msgEle);
+					acampData.addMessageElement(msgEle.build());
 					acamp.setPayload(acampData);
 					byte[] data = acamp.serialize();
 					ACAMPagent.sendMessage(data);
@@ -239,7 +239,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 						 .setType((byte)0x00)
 						 .setSequenceNumber(Integer.MAX_VALUE);
 					ACAMPData acampData = new ACAMPData();
-					acampData.addMessageElement(msgEle);
+					acampData.addMessageElement(msgEle.build());
 					acamp.setPayload(acampData);
 					byte[] data = acamp.serialize();
 					ACAMPagent.sendMessage(data);
