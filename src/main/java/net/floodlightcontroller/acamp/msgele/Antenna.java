@@ -62,40 +62,45 @@ public class Antenna extends BasePacket implements IPacket {
 		return radioId;
 	}
 
-	public void setRadioId(short radioId) {
+	public Antenna setRadioId(short radioId) {
 		this.radioId = radioId;
+		return this;
 	}
 
 	public byte getDiversity() {
 		return diversity;
 	}
 
-	public void setDiversity(byte diversity) {
+	public Antenna setDiversity(byte diversity) {
 		this.diversity = diversity;
+		return this;
 	}
 
 	public byte getCombiner() {
 		return combiner;
 	}
 
-	public void setCombiner(byte combiner) {
+	public Antenna setCombiner(byte combiner) {
 		this.combiner = combiner;
+		return this;
 	}
 
 	public short getAntennaCount() {
 		return antennaCount;
 	}
 
-	public void setAntennaCount(short antennaCount) {
+	public Antenna setAntennaCount(short antennaCount) {
 		this.antennaCount = antennaCount;
+		return this;
 	}
 
 	public byte[] getAntennaSelection() {
 		return antennaSelection;
 	}
 
-	public void setAntennaSelection(byte[] antennaSelection) {
+	public Antenna setAntennaSelection(byte[] antennaSelection) {
 		this.antennaSelection = antennaSelection;
+		return this;
 	}
 
 }

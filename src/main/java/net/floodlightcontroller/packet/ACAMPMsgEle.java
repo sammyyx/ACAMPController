@@ -52,11 +52,9 @@ public class ACAMPMsgEle extends BasePacket implements IPacket{
 		return messageElementType;
 	}
 	
-	/**
-	 * 最终用于生成MessageElement
-	 * @return
-	 */
+	
 	public ACAMPMsgEle build() {
+		if(payload == null) return null;
 		this.messageElementLength = this.payload.serialize().length;
 		return this;
 	}

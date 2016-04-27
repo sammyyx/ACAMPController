@@ -18,9 +18,12 @@ public class ACAMPData extends BasePacket implements IPacket {
 	}
 
 	//向ACAMPData里面添加Message Element，ACAMPData总长度在此函数中统计
-	public void addMessageElement(ACAMPMsgEle msgEle) {
-		msgEleList.add(msgEle);
-		length += (msgEle.messageElementLength + ACAMPProtocol.LEN_ME_HEADER);
+	public void addMessageElement(ACAMPMsgEle ...msgEle) {
+		if(msgEle.length == 0) return;
+		for(ACAMPMsgEle me: msgEle) {
+			msgEleList.add(me);
+			length += (me.messageElementLength + ACAMPProtocol.LEN_ME_HEADER);
+		}
 	}
 	
 	@Override

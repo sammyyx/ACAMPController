@@ -1,0 +1,39 @@
+{
+"MultiDomainCapability":
+	{
+	"firstChannel":0,
+	"maxTxPowerLevel":0,
+	"numberOfChannels":0,
+	"reserve":0,
+	"radioId":0
+	},
+"Wlan-Info":
+	{
+	"keyStatus":68,
+	"radioId":102,
+	"suppressSSID":-120,
+	"groupTSC":[0,0,0,0,0,0],
+	"ssid":"Helloworld",
+	"wlanId":119,
+	"capability":8738,
+	"keyLength":0,
+	"qos":85,
+	"keyIndex":51,
+	"authType":17,
+	"key":[104,101,108,108,111,119,111,114,108,100]
+	},
+"Tx-Power":
+	{
+	"numberLevel":0,
+	"radioId":0,
+	"powerLevel":[]
+	},
+"Antenna":
+	{
+	"diversity":0,
+	"antennaCount":0,
+	"radioId":0,
+	"antennaSelection":[],
+	"combiner":0
+	}
+}

@@ -44,24 +44,27 @@ public class TxPower extends BasePacket implements IPacket {
 		return radioId;
 	}
 
-	public void setRadioId(byte radioId) {
+	public TxPower setRadioId(byte radioId) {
 		this.radioId = radioId;
+		return this;
 	}
 
 	public byte getNumberLevel() {
 		return numberLevel;
 	}
 
-	public void setNumberLevel(byte numberLevel) {
+	public TxPower setNumberLevel(byte numberLevel) {
 		this.numberLevel = numberLevel;
+		return this;
 	}
 
 	public short[] getPowerLevel() {
 		return powerLevel;
 	}
 
-	public void setPowerLevel(short[] powerLevel) {
+	public TxPower setPowerLevel(short[] powerLevel) {
 		this.powerLevel = powerLevel;
+		return this;
 	}
 
 }

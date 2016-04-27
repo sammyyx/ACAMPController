@@ -33,6 +33,7 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.packet.ACAMP;
+import net.floodlightcontroller.packet.ACAMPData;
 import net.floodlightcontroller.packet.ACAMPMsgEle;
 import net.floodlightcontroller.packet.Data;
 import net.floodlightcontroller.packet.Ethernet;
@@ -60,7 +61,7 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 	protected IRestApiService restApiService;
 	
 	//Send函数为所有需要发送Packet-out的报文设置
-	private static void sendMessage(byte[] acamp_bytes) {
+	protected static void sendMessage(byte[] acamp_bytes) {
 		Ethernet l2 = new Ethernet();
 		l2.setSourceMACAddress(srcMac);
 		l2.setDestinationMACAddress(dstMac);
@@ -194,14 +195,17 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 					ACAMPMsgEle msgEle = new ACAMPMsgEle();
 					ResultCode resultCode = (ResultCode)msgEle.createBuilder(ACAMPProtocol.MsgEleType.RESULT_CODE);
 					resultCode.setResultCode((byte)0x01);
-					ACAMPEncapsulate AP1 = new ACAMPEncapsulate();
-					AP1.setVersion((short)0x0001)
-					   .setApid(66)
-					   .setMessageType(ACAMPProtocol.MsgType.REGISTER_RESPONSE)
-					   .setVersion((short)0x0001)
-					   .setType((byte)0x00)
-					   .setSequenceNum(Integer.MAX_VALUE);
-					byte[] data = AP1.createACAMPMessage(msgEle);
+					ACAMP acamp = new ACAMP();
+					acamp.setVersion((short)0x0001)
+						 .setAPID(144)
+					     .setMessageType(ACAMPProtocol.MsgType.REGISTER_RESPONSE)
+					     .setVersion((short)0x0001)
+					     .setType((byte)0x00)
+					     .setSequenceNumber(Integer.MAX_VALUE);
+					ACAMPData acampData = new ACAMPData();
+					acampData.addMessageElement(msgEle);
+					acamp.setPayload(acampData);
+					byte[] data = acamp.serialize();
 					ACAMPagent.sendMessage(data);
 					break;
 				}
@@ -227,14 +231,17 @@ public class ACAMPagent implements IOFMessageListener, IFloodlightModule {
 							.setSuppressSSID((byte)0x88)
 							.setSsid("Helloworld")
 							.setKey(key.getBytes());
-					ACAMPEncapsulate AP1 = new ACAMPEncapsulate();
-					AP1.setVersion((short)0x0001)
-					   .setApid(66)
-					   .setMessageType(ACAMPProtocol.MsgType.CONFIGURATION_RESPONSE)
-					   .setVersion((short)0x0001)
-					   .setType((byte)0x00)
-					   .setSequenceNum(888888888888L);
-					byte[] data = AP1.createACAMPMessage(msgEle);
+					ACAMP acamp = new ACAMP();
+					acamp.setVersion((short)0x0001)
+						 .setAPID(144)
+						 .setMessageType(ACAMPProtocol.MsgType.CONFIGURATION_RESPONSE)
+						 .setVersion((short)0x0001)
+						 .setType((byte)0x00)
+						 .setSequenceNumber(Integer.MAX_VALUE);
+					ACAMPData acampData = new ACAMPData();
+					acampData.addMessageElement(msgEle);
+					acamp.setPayload(acampData);
+					byte[] data = acamp.serialize();
 					ACAMPagent.sendMessage(data);
 					break;	
 				}
